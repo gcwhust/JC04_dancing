@@ -14,9 +14,9 @@
 
 [![点击观看豆豆龙完整舞蹈视频](docs/media/doudoulong-preview.gif)](https://gcwhust.github.io/JC04_dancing/#doudoulong)
 
-**[▶ 观看豆豆龙完整无声视频](https://gcwhust.github.io/JC04_dancing/#doudoulong)** · 85 秒 · 1920 × 1080 · 30 FPS
+**[▶ 观看豆豆龙完整有声视频](https://gcwhust.github.io/JC04_dancing/#doudoulong)** · 85 秒 · 1920 × 1080 · 30 FPS
 
-两张预览 GIF 均无声，点击可播放对应完整视频。新年配乐从第 2 秒、舞蹈主体开始时进入；豆豆龙尚未提供对应音乐，当前成片无音轨。
+两张预览 GIF 均无声，点击可播放对应完整有声视频。两支舞蹈的配乐均从第 2 秒、舞蹈主体开始时进入；豆豆龙复用新年的现有背景音乐，节拍配合尚未验证。
 
 ## 仿真模型
 
@@ -101,16 +101,15 @@ python -m jc04_dancing add-audio \
 
 生成 `outputs/reproduced_audio/dance.mp4`，保留原视频画面和时间轴，加入 AAC 立体声音轨。默认使用包内新年配乐，原速从 **2 秒** 开始，淡入 0.4 秒、淡出 0.8 秒，音乐结束后补静音至全片结束。
 
-豆豆龙默认保留无声录像。如需配乐，请自行提供对应音乐并明确传入 `--audio`：
+豆豆龙复用同一首包内背景音乐，执行以下命令即可复现有声成片：
 
 ```bash
 python -m jc04_dancing add-audio \
   --run-dir outputs/doudoulong \
-  --audio /path/to/doudoulong-music.mp3 \
   --output outputs/doudoulong_audio
 ```
 
-可使用 `--timeline-start-seconds`、`--fade-in-seconds`、`--fade-out-seconds` 调整进入时间和淡入淡出。建议用浏览器或常规视频播放器试听；部分编辑器内置预览可能不支持 AAC 音频。
+两支视频中的音乐均约在第 78.32 秒结束，随后补静音至各自片尾。可追加 `--audio /path/to/music.mp3` 替换为自备音乐，或使用 `--timeline-start-seconds`、`--fade-in-seconds`、`--fade-out-seconds` 调整进入时间和淡入淡出。建议用浏览器或常规视频播放器试听；部分编辑器内置预览可能不支持 AAC 音频。
 
 ### 3. 生成新年中文设计说明与流程图
 
@@ -120,7 +119,7 @@ python -m jc04_dancing report \
   --output outputs/reproduced_report/report.pdf
 ```
 
-输出 `report.pdf`、`report.json`、`flowchart.pdf` 和 `flowchart.png`。生成前会检查完整视频、运行记录及截图是否一致；截断预览、跌倒或有数值警告的运行不能用于正式报告。目前 `report` 和 `submit` **仅支持 `new_year`**；`doudoulong` 可播放、检查、录像及使用自备音乐合成音轨。
+输出 `report.pdf`、`report.json`、`flowchart.pdf` 和 `flowchart.png`。生成前会检查完整视频、运行记录及截图是否一致；截断预览、跌倒或有数值警告的运行不能用于正式报告。目前 `report` 和 `submit` **仅支持 `new_year`**；`doudoulong` 可播放、检查、录像及合成音轨。
 
 ### 4. 生成新年提交材料
 
