@@ -1,0 +1,72 @@
+model:
+  resource: assets/robot/robot.xml
+  initial_keyframe: standing
+  root_joint: root
+  support_equality: base_support
+  # qpos0 already uses rest_deg; hinge refs preserve original URDF angles.
+  # Simulator-only playback envelope, verified against all four original clips.
+  # Source URDF/XML ranges are retained. No claim about hardware range of motion.
+  joint_range_overrides:
+    right_shoulder_roll: [-0.18, 3.14]
+    left_shoulder_roll: [-0.18, 3.14]
+    right_elbow_pitch: [-1.5708, 2.10]
+    left_elbow_pitch: [-1.5708, 2.10]
+joint_order:
+  - right_shoulder_pitch
+  - right_shoulder_roll
+  - right_elbow_pitch
+  - left_shoulder_pitch
+  - left_shoulder_roll
+  - left_elbow_pitch
+  - right_hip_pitch
+  - right_knee_pitch
+  - left_hip_pitch
+  - left_knee_pitch
+rest_deg:
+  right_shoulder_pitch: 0.0
+  right_shoulder_roll: 0.0
+  right_elbow_pitch: 0.0
+  left_shoulder_pitch: 0.0
+  left_shoulder_roll: 0.0
+  left_elbow_pitch: 0.0
+  right_hip_pitch: 40.0
+  right_knee_pitch: 100.7787
+  left_hip_pitch: 40.0
+  left_knee_pitch: 100.7787
+leg_pattern:
+  hip_amplitude_deg: 1.0
+  knee_amplitude_deg: 1.0
+  frequency_hz: 0.25
+  left_phase_rad: 3.141592653589793
+  right_phase_rad: 0.0
+wheels:
+  # User requirement: zero-speed wheel brakes, independent of the floating root.
+  mode: locked
+  joints: [right_wheel_joint, left_wheel_joint]
+  lock_equalities: [right_wheel_lock, left_wheel_lock]
+# Initial simulator gains only; tune and validate with physical integration.
+actuators:
+  right_shoulder_pitch: {kp: 40.0, kd: 2.0, max_torque: 30.0}
+  right_shoulder_roll: {kp: 40.0, kd: 2.0, max_torque: 30.0}
+  right_elbow_pitch: {kp: 40.0, kd: 2.0, max_torque: 30.0}
+  left_shoulder_pitch: {kp: 40.0, kd: 2.0, max_torque: 30.0}
+  left_shoulder_roll: {kp: 40.0, kd: 2.0, max_torque: 30.0}
+  left_elbow_pitch: {kp: 40.0, kd: 2.0, max_torque: 30.0}
+  right_hip_pitch: {kp: 160.0, kd: 8.0, max_torque: 80.0}
+  right_knee_pitch: {kp: 160.0, kd: 8.0, max_torque: 80.0}
+  left_hip_pitch: {kp: 160.0, kd: 8.0, max_torque: 80.0}
+  left_knee_pitch: {kp: 160.0, kd: 8.0, max_torque: 80.0}
+scene:
+  # External velocity feedback must resolve the low-inertia arm dynamics.
+  timestep: 0.0005
+  gravity: [0.0, 0.0, -9.81]
+  friction: [1.0, 0.005, 0.0001]
+  # Finite display size of the infinite collision plane; expose physical motion.
+  floor_half_size: 50.0
+camera:
+  name: overview
+  follow_base_xy: true
+  distance: 2.2
+  azimuth: 135.0
+  elevation: -15.0
+  lookat: [0.0, 0.0, 0.5]

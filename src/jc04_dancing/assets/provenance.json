@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "source_snapshot": "2d224d13d624e07102a2c6eedbaf111694555e16",
+  "source_identifier": "JC04 local reference snapshot (relative paths only)",
+  "model": {
+    "package": "jc04_desc4",
+    "version": "V1.3",
+    "source": "JC04Dev/src/jc04_desc4/urdf/jc04.urdf",
+    "converted_with": "MuJoCo 3.3.7"
+  },
+  "audio": {
+    "file": "audio/happy_new_year.mp3",
+    "status": "candidate_pending_audio_review",
+    "license": "not_inferred_from_model"
+  },
+  "files": [
+    {
+      "source": "JC04Dev/src/motion_control/motion_real/trajectory/happy_new_year.mp3",
+      "target": "audio/happy_new_year.mp3",
+      "source_sha256": "a6afc7649b5c4e2833368abccd7730829e6989e17fea50120ae8e51386619925",
+      "target_sha256": "a6afc7649b5c4e2833368abccd7730829e6989e17fea50120ae8e51386619925",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/LICENSE",
+      "target": "licenses/jc04_desc4-LICENSE.txt",
+      "source_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "target_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/motion_control/LICENSE",
+      "target": "licenses/motion_control-LICENSE.txt",
+      "source_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "target_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/motion_control/motion_real/trajectory/doudoulong_postprocess.csv",
+      "target": "motions/doudoulong_postprocess.csv",
+      "source_sha256": "f96b2a2af7751a8053b2a7bb56c2742ca2f039ed5c89369d656e7559d050888f",
+      "target_sha256": "f96b2a2af7751a8053b2a7bb56c2742ca2f039ed5c89369d656e7559d050888f",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/motion_control/motion_real/trajectory/happy_new_year.csv",
+      "target": "motions/happy_new_year.csv",
+      "source_sha256": "2f63534ace314415b7804c960a27d338280753cfb82b4950fa4e878e587496f9",
+      "target_sha256": "2f63534ace314415b7804c960a27d338280753cfb82b4950fa4e878e587496f9",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/motion_control/motion_real/trajectory/shizi0307.csv",
+      "target": "motions/shizi0307.csv",
+      "source_sha256": "8c2a28f31dc017fa3a4e0cb80fdde1b7ed6ba413ea26fdeff66ca76a4b536e88",
+      "target_sha256": "8c2a28f31dc017fa3a4e0cb80fdde1b7ed6ba413ea26fdeff66ca76a4b536e88",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/motion_control/motion_real/trajectory/shuangjiang0307.csv",
+      "target": "motions/shuangjiang0307.csv",
+      "source_sha256": "a98e143349baf03ad3154848da33efe2b4d84d9078fcdd833623a5de4fcef3b1",
+      "target_sha256": "a98e143349baf03ad3154848da33efe2b4d84d9078fcdd833623a5de4fcef3b1",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/urdf/jc04.urdf",
+      "target": "robot/jc04.urdf",
+      "source_sha256": "e954723967a1577ee54b3cf2b90575b619c79834b5fa3e6d56e491410da16f19",
+      "target_sha256": "e1992e4ce21d9d1a8f642d5ee19c8bfdcb1f55289367eb03278dcf21e146f333",
+      "transformation": "Replace package://jc04_desc4/ mesh URI prefix with a relative path; preserve all other bytes"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/battery_Link.STL",
+      "target": "robot/meshes/battery_Link.STL",
+      "source_sha256": "94b335cd733cb0ac72328e67435b4441592fb10bca37aac05952a3cd889b1060",
+      "target_sha256": "94b335cd733cb0ac72328e67435b4441592fb10bca37aac05952a3cd889b1060",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_assist_wheel.STL",
+      "target": "robot/meshes/left_assist_wheel.STL",
+      "source_sha256": "ec81683f94873a7f9fddfdc912967fb25a2acf05dce9bb542853f0f9fed92158",
+      "target_sha256": "ec81683f94873a7f9fddfdc912967fb25a2acf05dce9bb542853f0f9fed92158",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "robot/meshes/left_assist_wheel.STL",
+      "target": "robot/meshes/left_assist_wheel.msh",
+      "source_sha256": "ec81683f94873a7f9fddfdc912967fb25a2acf05dce9bb542853f0f9fed92158",
+      "target_sha256": "44b4d513647b027c47f80681354efe41abef9fdcdf6889b614d75f1b87dc8671",
+      "transformation": "Lossless binary STL to native MSH; retain all triangles and coordinates"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_driving_wheel.STL",
+      "target": "robot/meshes/left_driving_wheel.STL",
+      "source_sha256": "ff4a63b9835a5142b07d2d6fe42993a5256596ca7dc4c198599194622e053e8a",
+      "target_sha256": "ff4a63b9835a5142b07d2d6fe42993a5256596ca7dc4c198599194622e053e8a",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_elbow_pitch_Link.STL",
+      "target": "robot/meshes/left_elbow_pitch_Link.STL",
+      "source_sha256": "102fcaca1df7acf90ce38b7ea8e71ba7441d176c9db5d16cea9148c3c9ab6dd1",
+      "target_sha256": "102fcaca1df7acf90ce38b7ea8e71ba7441d176c9db5d16cea9148c3c9ab6dd1",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_elbow_pitch_casing_Link.STL",
+      "target": "robot/meshes/left_elbow_pitch_casing_Link.STL",
+      "source_sha256": "163c7333e89a96762d78637148eb9fa65552417ab762b241193b28ff44ddb536",
+      "target_sha256": "163c7333e89a96762d78637148eb9fa65552417ab762b241193b28ff44ddb536",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_gripper.STL",
+      "target": "robot/meshes/left_gripper.STL",
+      "source_sha256": "bc3aa5adbd1c788fd0812c58626021d3c0b9ba3a7f6756f6d0da2dbbc252dc65",
+      "target_sha256": "bc3aa5adbd1c788fd0812c58626021d3c0b9ba3a7f6756f6d0da2dbbc252dc65",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_hip_pitch_Link.STL",
+      "target": "robot/meshes/left_hip_pitch_Link.STL",
+      "source_sha256": "c399eb4d3b14a2065f3347366bdae7e9a8dd1d29be0019a8af5faf8594fc12e6",
+      "target_sha256": "c399eb4d3b14a2065f3347366bdae7e9a8dd1d29be0019a8af5faf8594fc12e6",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_hip_pitch_casing_Link.STL",
+      "target": "robot/meshes/left_hip_pitch_casing_Link.STL",
+      "source_sha256": "55f862d7277eb1dc1a1f8b36022561e1e5ffe75023581a10a87492fe29339cc1",
+      "target_sha256": "55f862d7277eb1dc1a1f8b36022561e1e5ffe75023581a10a87492fe29339cc1",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_knee_pitch_Link.STL",
+      "target": "robot/meshes/left_knee_pitch_Link.STL",
+      "source_sha256": "66c85642214bf6b0e41f9fee0c1b0ab954f2a2eeec0b6a6d2e9f95179b4355f9",
+      "target_sha256": "66c85642214bf6b0e41f9fee0c1b0ab954f2a2eeec0b6a6d2e9f95179b4355f9",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_knee_pitch_casing_Link.STL",
+      "target": "robot/meshes/left_knee_pitch_casing_Link.STL",
+      "source_sha256": "ec16547fa6a61909729fb146a2f102c10631aa8041376bb52fd770267476c2c3",
+      "target_sha256": "ec16547fa6a61909729fb146a2f102c10631aa8041376bb52fd770267476c2c3",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_shoulder_pitch_Link.STL",
+      "target": "robot/meshes/left_shoulder_pitch_Link.STL",
+      "source_sha256": "8375a78af47d8bca609b9688f8d91ba732dcb9e52d40d888f37af229f4f7d1d0",
+      "target_sha256": "8375a78af47d8bca609b9688f8d91ba732dcb9e52d40d888f37af229f4f7d1d0",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_shoulder_roll_Link.STL",
+      "target": "robot/meshes/left_shoulder_roll_Link.STL",
+      "source_sha256": "a04d09354afd888f74163be7dd0317d674ef7371d522865ec61f53b254ba88c8",
+      "target_sha256": "a04d09354afd888f74163be7dd0317d674ef7371d522865ec61f53b254ba88c8",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/left_shoulder_roll_casing_Link.STL",
+      "target": "robot/meshes/left_shoulder_roll_casing_Link.STL",
+      "source_sha256": "1b3bc0fda013847c759d5866e04909f92fc729f4aba6c25385305a745fa8bd37",
+      "target_sha256": "1b3bc0fda013847c759d5866e04909f92fc729f4aba6c25385305a745fa8bd37",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_assist_wheel.STL",
+      "target": "robot/meshes/right_assist_wheel.STL",
+      "source_sha256": "af7927757d4febb1d5a3a4d788a39c81521f709496bf540dc59237a21cbb2b51",
+      "target_sha256": "af7927757d4febb1d5a3a4d788a39c81521f709496bf540dc59237a21cbb2b51",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "robot/meshes/right_assist_wheel.STL",
+      "target": "robot/meshes/right_assist_wheel.msh",
+      "source_sha256": "af7927757d4febb1d5a3a4d788a39c81521f709496bf540dc59237a21cbb2b51",
+      "target_sha256": "d688a1c165c44aa784ef0297a66a272a45dc616a53112e1cad6ddd578b8e7734",
+      "transformation": "Lossless binary STL to native MSH; retain all triangles and coordinates"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_driving_wheel.STL",
+      "target": "robot/meshes/right_driving_wheel.STL",
+      "source_sha256": "d52ff9c037cc2501aa0ef89e37a94a11b7821e3caccd99b33483e51b47ed427d",
+      "target_sha256": "d52ff9c037cc2501aa0ef89e37a94a11b7821e3caccd99b33483e51b47ed427d",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_elbow_pitch_Link.STL",
+      "target": "robot/meshes/right_elbow_pitch_Link.STL",
+      "source_sha256": "3916c118656710e2b4edb57e15cd778a6aef1d8474a74e54f36371c30f3d6d2a",
+      "target_sha256": "3916c118656710e2b4edb57e15cd778a6aef1d8474a74e54f36371c30f3d6d2a",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_elbow_pitch_casing_Link.STL",
+      "target": "robot/meshes/right_elbow_pitch_casing_Link.STL",
+      "source_sha256": "ff9b4b6de5290badf34bfcdd264b539fe3d3559ae97bbea4c128d3c7a6a7a7f0",
+      "target_sha256": "ff9b4b6de5290badf34bfcdd264b539fe3d3559ae97bbea4c128d3c7a6a7a7f0",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_gripper.STL",
+      "target": "robot/meshes/right_gripper.STL",
+      "source_sha256": "67b1f56b5b1f851d2cab712bd43206c183c92a234de570427270d452f16b7498",
+      "target_sha256": "67b1f56b5b1f851d2cab712bd43206c183c92a234de570427270d452f16b7498",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_hip_pitch_Link.STL",
+      "target": "robot/meshes/right_hip_pitch_Link.STL",
+      "source_sha256": "245b062c8fa1f3468f58c9d6c7992013f81540e21d8d81b96e3f3f9e96f7aa7b",
+      "target_sha256": "245b062c8fa1f3468f58c9d6c7992013f81540e21d8d81b96e3f3f9e96f7aa7b",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_hip_pitch_casing_Link.STL",
+      "target": "robot/meshes/right_hip_pitch_casing_Link.STL",
+      "source_sha256": "3abd699f080c6a9ee65ed533c3bda0d045f0041e71dd3e54b46934db737baab4",
+      "target_sha256": "3abd699f080c6a9ee65ed533c3bda0d045f0041e71dd3e54b46934db737baab4",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_knee_pitch_Link.STL",
+      "target": "robot/meshes/right_knee_pitch_Link.STL",
+      "source_sha256": "2da08dc0a900622a268b8646b9f02ae543e434233dd5281685c91d7e5b0a4160",
+      "target_sha256": "2da08dc0a900622a268b8646b9f02ae543e434233dd5281685c91d7e5b0a4160",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_knee_pitch_casing_Link.STL",
+      "target": "robot/meshes/right_knee_pitch_casing_Link.STL",
+      "source_sha256": "e297923e9079ce599e4264a5a3708e49d05ec6956c9d6951c24fe49d8913fb14",
+      "target_sha256": "e297923e9079ce599e4264a5a3708e49d05ec6956c9d6951c24fe49d8913fb14",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_shoulder_pitch_Link.STL",
+      "target": "robot/meshes/right_shoulder_pitch_Link.STL",
+      "source_sha256": "c5296871df1ebed9a057f18aa407ecc0c42dc544beef9043883c8e9f3baa3fbc",
+      "target_sha256": "c5296871df1ebed9a057f18aa407ecc0c42dc544beef9043883c8e9f3baa3fbc",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_shoulder_roll_Link.STL",
+      "target": "robot/meshes/right_shoulder_roll_Link.STL",
+      "source_sha256": "3580e7979bb0096a1b445d238b2108327596a0102dc03d0127327ff11758d486",
+      "target_sha256": "3580e7979bb0096a1b445d238b2108327596a0102dc03d0127327ff11758d486",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/right_shoulder_roll_casing_Link.STL",
+      "target": "robot/meshes/right_shoulder_roll_casing_Link.STL",
+      "source_sha256": "dcf6018a8a94896e8811761afed0cabd0e01f4b8ef32bb399a663267b7579c3c",
+      "target_sha256": "dcf6018a8a94896e8811761afed0cabd0e01f4b8ef32bb399a663267b7579c3c",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/robot_base.STL",
+      "target": "robot/meshes/robot_base.STL",
+      "source_sha256": "dccb50f309844671e45ca12461349f247f2ad781c87183eb1556f71800770fc7",
+      "target_sha256": "dccb50f309844671e45ca12461349f247f2ad781c87183eb1556f71800770fc7",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "robot/meshes/robot_base.STL",
+      "target": "robot/meshes/robot_base.msh",
+      "source_sha256": "dccb50f309844671e45ca12461349f247f2ad781c87183eb1556f71800770fc7",
+      "target_sha256": "12b86583e1a2f3a8022172a635238db720474823dea19620ac6220a4db6d29dd",
+      "transformation": "Lossless binary STL to native MSH; retain all triangles and coordinates"
+    },
+    {
+      "source": "JC04Dev/src/jc04_desc4/meshes/robot_base_casing_Link.STL",
+      "target": "robot/meshes/robot_base_casing_Link.STL",
+      "source_sha256": "3471d5b2b83d1001a2240a00f709acacc6d9cff61f475e1791e6aeb4a4333a67",
+      "target_sha256": "3471d5b2b83d1001a2240a00f709acacc6d9cff61f475e1791e6aeb4a4333a67",
+      "transformation": "byte-for-byte copy"
+    },
+    {
+      "source": "robot/jc04.urdf",
+      "target": "robot/robot.xml",
+      "source_sha256": "e1992e4ce21d9d1a8f642d5ee19c8bfdcb1f55289367eb03278dcf21e146f333",
+      "target_sha256": "c589434f212d7b582fe4697d1d82de7232ae04d983b45c09cc7237899886891b",
+      "transformation": "MuJoCo 3.3.7 URDF import and MJCF export; scene and contacts: docs/model-conversion.md"
+    }
+  ]
+}

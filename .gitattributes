@@ -1,0 +1,4 @@
+# Imported assets retain their source bytes (including CRLF and whitespace).
+src/jc04_dancing/assets/** -text -whitespace
+# Published video, images and PDF are binary artifacts.
+docs/media/** binary -whitespace

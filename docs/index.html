@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="小楚 JC04 轮足机器人在 MuJoCo 中的完整舞蹈仿真，含配乐视频与复现源码。">
+  <title>小楚机器人 · 舞蹈仿真</title>
+  <style>
+    :root { color-scheme: light; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #17324a; background: #f3f7fb; }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    main { max-width: 1080px; margin: auto; padding: 48px 24px; }
+    .eyebrow { color: #237d8c; font-size: 13px; font-weight: 700; letter-spacing: .12em; }
+    h1 { margin: 12px 0; font-size: clamp(28px, 5vw, 44px); letter-spacing: -.03em; }
+    .intro { color: #52697b; line-height: 1.8; margin: 0 0 26px; }
+    .player { border: 1px solid #d9e3ec; border-radius: 16px; background: #e4edf4; overflow: hidden; box-shadow: 0 16px 44px #193e5c12; }
+    video { display: block; width: 100%; aspect-ratio: 16 / 9; }
+    .caption { display: flex; flex-wrap: wrap; gap: 8px 20px; padding: 16px 20px; background: white; color: #52697b; font-size: 14px; }
+    .links { display: flex; gap: 12px; flex-wrap: wrap; margin: 24px 0 18px; }
+    a { color: #1c637e; text-underline-offset: 3px; }
+    .links a { padding: 11px 17px; border: 1px solid #ccdae6; border-radius: 9px; text-decoration: none; font-weight: 600; background: white; }
+    .links a:first-child { color: white; background: #1e647d; border-color: #1e647d; }
+    a:focus-visible { outline: 3px solid #efb331; outline-offset: 4px; }
+    .note { color: #52697b; font-size: 14px; line-height: 1.8; }
+    footer { margin-top: 32px; padding-top: 20px; border-top: 1px solid #d9e3ec; color: #52697b; font-size: 13px; }
+    @media (max-width: 600px) { main { padding: 28px 16px; } .caption { padding: 12px; } }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">JC04 DANCING / MUJOCO</div>
+    <h1>小楚机器人 · 舞蹈仿真</h1>
+    <p class="intro">双臂随动作展开，髋膝协调运动。以完整物理仿真呈现小楚轮足机器人的舞蹈。</p>
+    <section class="player" aria-label="完整舞蹈视频">
+      <video controls playsinline preload="metadata" poster="media/dance-poster.png" aria-label="小楚机器人完整舞蹈，背景配乐从第 2 秒开始，无对白">
+        <source src="media/dance.mp4" type="video/mp4">
+        当前浏览器不支持视频播放，请<a href="media/dance.mp4">下载 MP4 视频</a>。
+      </video>
+      <div class="caption"><span>83.33 秒完整演示</span><span>1920 × 1080 · 30 FPS</span><span>含配乐 · 第 2 秒开始</span></div>
+    </section>
+    <nav class="links" aria-label="项目资料">
+      <a href="https://github.com/gcwhust/JC04_dancing#readme">查看源码与复现步骤</a>
+      <a href="media/dance.mp4" download>下载完整视频</a>
+      <a href="media/design.pdf">设计说明</a>
+      <a href="media/workflow.png">运行流程图</a>
+    </nav>
+    <p class="note">点击播放即可观看。前 2 秒是准备动作；若没有声音，请打开播放器的音量。<br>演示采用浮动机身与驱动轮制动约束，保留机器人和地面的物理接触。</p>
+    <footer>模型、动作、配置及运行工具均随仓库提供。安装和运行方法见项目 README。</footer>
+  </main>
+</body>
+</html>

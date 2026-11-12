@@ -1,0 +1,9 @@
+name: jc04_dancing
+channels:
+  - conda-forge
+  - nodefaults
+dependencies:
+  - python=3.10.22
+  - pip=26.2.1
+  - pip:
+      - -r requirements-lock.txt

@@ -1,0 +1,15 @@
+/JC04-master-*/
+*.tar.gz
+*.zip
+/模拟仿真赛道任务说明书.pdf
+.superpowers/
+.worktrees/
+.venv*/
+__pycache__/
+*.pyc
+.pytest_cache/
+build/
+dist/
+*.egg-info/
+outputs/
+submission/
