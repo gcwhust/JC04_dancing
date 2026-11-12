@@ -45,18 +45,22 @@
         <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.898039 0.917647 0.929412 1" mesh="right_hip_pitch_Link" name="right_hip_pitch_Link_visual_0" />
         <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="right_hip_pitch_casing_Link" name="right_hip_pitch_Link_visual_2" />
         <body name="right_knee_pitch_Link" pos="0 -0.00250000000000034 -0.25" quat="0.6375671998618434 0 -0.7703947466463723 0">
-          <inertial pos="-0.03170341320668882 -0.02099442990619011 -0.1257089448237115" quat="0.9436227637874725 0.2286569183413334 -0.04885167938068953 -0.234319454545335" mass="1.481028342325969" diaginertia="0.01984373114912298 0.01855912677075918 0.005805564546335553" />
+          <inertial pos="-0.02295663818003744 0.007191455560536274 -0.1473302951686435" quat="0.7214064832549196 -0.0159557019471032 -0.07089748113043076 0.6886883538019983" mass="1.20120936397292" diaginertia="0.01273746209156403 0.01083347548685845 0.002385181770141245" />
           <joint name="right_knee_pitch" pos="0 0 0" axis="0 -1 0" range="0 2.4435" actuatorfrcrange="-100 100" damping="0.05" ref="1.7589201308796094" />
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.898039 0.917647 0.929412 1" mesh="right_knee_pitch_Link" name="right_knee_pitch_Link_visual_0" />
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="right_knee_pitch_casing_Link" name="right_knee_pitch_Link_visual_2" />
-          <geom pos="-0.167491 0.011 -0.0758765" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="right_assist_wheel" name="right_knee_pitch_Link_visual_4" />
           <body name="right_driving_wheel" pos="0 0.0097 -0.32" quat="1 0 0 0">
             <inertial pos="-1.39109638938249e-07 0.0152470142687362 3.53717497780792e-06" quat="0.4999904360877717 0.5000095637292963 0.4999904360877717 0.5000095637292963" mass="0.638655440332923" diaginertia="0.002413377750319018 0.001258088210982522 0.00125776029365768" />
             <joint name="right_wheel_joint" pos="0 0 0" axis="0 1 0" />
             <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.792157 0.819608 0.933333 1" mesh="right_driving_wheel" name="right_driving_wheel_visual_0" />
             <geom name="right_driving_contact" type="cylinder" pos="0 0 0" quat="0.7071067811865476 0.7071067811865476 0 0" size="0.09 0.015" contype="1" conaffinity="1" group="3" rgba="0.1 0.5 0.9 0.3" friction="1 0.005 0.0001" condim="4" />
           </body>
-          <geom name="right_assist_contact" type="cylinder" pos="-0.167490907047312 0.011 -0.0758764543830288" quat="0.7071067811865476 0.7071067811865476 0 0" size="0.063 0.022" contype="1" conaffinity="1" group="3" rgba="0.1 0.5 0.9 0.3" friction="1 0.005 0.0001" condim="4" />
+          <body name="right_assist_wheel" pos="-0.167490907047312 0.011 -0.0758764543830288" quat="1 0 0 0">
+            <inertial pos="2.59022325382885e-06 0.0255000118570747 1.70145693445534e-06" quat="0.6233284436569784 0.333853032218807 0.3338484486927973 0.6233370015584612" mass="0.279818978353049" diaginertia="0.0005732870342926708 0.0003300744422283543 0.000330039351357144" />
+            <joint name="right_assist" pos="0 0 0" axis="0 1 0" damping="0.001" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="right_assist_wheel" name="right_assist_wheel_visual_0" />
+            <geom name="right_assist_contact" type="cylinder" pos="0 0 0" quat="0.7071067811865476 0.7071067811865476 0 0" size="0.063 0.022" contype="1" conaffinity="1" group="3" rgba="0.1 0.5 0.9 0.3" friction="0.03 0.0001 0.0001" condim="4" priority="1" />
+          </body>
           <geom name="right_knee_contact" type="capsule" fromto="0 0 -0.04 -0.02 0 -0.25" size="0.025" contype="2" conaffinity="0" group="3" rgba="0.1 0.5 0.9 0.3" />
         </body>
         <geom name="right_hip_contact" type="capsule" fromto="0 0 -0.04 0 0 -0.21" size="0.025" contype="2" conaffinity="0" group="3" rgba="0.1 0.5 0.9 0.3" />
@@ -67,18 +71,22 @@
         <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.898039 0.917647 0.929412 1" mesh="left_hip_pitch_Link" name="left_hip_pitch_Link_visual_0" />
         <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="left_hip_pitch_casing_Link" name="left_hip_pitch_Link_visual_2" />
         <body name="left_knee_pitch_Link" pos="0 0.00249999999999929 -0.249999999999997" quat="0.6375671998618434 0 -0.7703947466463723 0">
-          <inertial pos="-0.03270095596656352 -0.04229563975327114 -0.1229013476459157" quat="0.9551104932311199 0.2564799532840465 -0.08229208885420249 -0.1233287938610931" mass="1.481048874128815" diaginertia="0.02355405803605637 0.01999881510862522 0.008112861933377756" />
+          <inertial pos="-0.02295689400567545 -0.007192199493003743 -0.1473441451879899" quat="0.6886926930936313 -0.0708859473383846 -0.0159588077756393 0.7214034054561723" mass="1.20123001440057" diaginertia="0.01273868495675051 0.01083460763062041 0.002385319582317944" />
           <joint name="left_knee_pitch" pos="0 0 0" axis="0 -1 0" range="0 2.4435" actuatorfrcrange="-100 100" damping="0.05" ref="1.7589201308796094" />
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.898039 0.917647 0.929412 1" mesh="left_knee_pitch_Link" name="left_knee_pitch_Link_visual_0" />
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="left_knee_pitch_casing_Link" name="left_knee_pitch_Link_visual_2" />
-          <geom pos="-0.167491 -0.011 -0.0758765" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="left_assist_wheel" name="left_knee_pitch_Link_visual_4" />
           <body name="left_driving_wheel" pos="0 -0.0097 -0.32" quat="1 0 0 0">
             <inertial pos="1.39109634834694e-07 -0.0152470142687362 3.53717497514339e-06" quat="0.5000095637292963 0.4999904360877717 0.5000095637292963 0.4999904360877717" mass="0.638655440332927" diaginertia="0.002413377750324418 0.001258088210982522 0.00125776029366308" />
             <joint name="left_wheel_joint" pos="0 0 0" axis="0 1 0" />
             <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.792157 0.819608 0.933333 1" mesh="left_driving_wheel" name="left_driving_wheel_visual_0" />
             <geom name="left_driving_contact" type="cylinder" pos="0 0 0" quat="0.7071067811865476 0.7071067811865476 0 0" size="0.09 0.015" contype="1" conaffinity="1" group="3" rgba="0.1 0.5 0.9 0.3" friction="1 0.005 0.0001" condim="4" />
           </body>
-          <geom name="left_assist_contact" type="cylinder" pos="-0.167490907047308 -0.011 -0.0758764543830315" quat="0.7071067811865476 0.7071067811865476 0 0" size="0.063 0.022" contype="1" conaffinity="1" group="3" rgba="0.1 0.5 0.9 0.3" friction="1 0.005 0.0001" condim="4" />
+          <body name="left_assist_wheel" pos="-0.167490907047308 -0.011 -0.07587645438303151" quat="1 0 0 0">
+            <inertial pos="3.08757537245685e-06 -0.0254999888028882 2.69962328824924e-07" quat="0.5226033878832975 0.4763252029579174 0.4763180652381186 0.5226098934461697" mass="0.279818859728245" diaginertia="0.0005732868800126587 0.0003300743380035555 0.0003300392837206958" />
+            <joint name="left_assist" pos="0 0 0" axis="0 1 0" damping="0.001" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.752941 0.752941 0.752941 1" mesh="left_assist_wheel" name="left_assist_wheel_visual_0" />
+            <geom name="left_assist_contact" type="cylinder" pos="0 0 0" quat="0.7071067811865476 0.7071067811865476 0 0" size="0.063 0.022" contype="1" conaffinity="1" group="3" rgba="0.1 0.5 0.9 0.3" friction="0.03 0.0001 0.0001" condim="4" priority="1" />
+          </body>
           <geom name="left_knee_contact" type="capsule" fromto="0 0 -0.04 -0.02 0 -0.25" size="0.025" contype="2" conaffinity="0" group="3" rgba="0.1 0.5 0.9 0.3" />
         </body>
         <geom name="left_hip_contact" type="capsule" fromto="0 0 -0.04 0 0 -0.21" size="0.025" contype="2" conaffinity="0" group="3" rgba="0.1 0.5 0.9 0.3" />
@@ -143,6 +151,8 @@
     <motor name="right_knee_pitch_motor" joint="right_knee_pitch" gear="1" ctrllimited="true" ctrlrange="-80 80" />
     <motor name="left_hip_pitch_motor" joint="left_hip_pitch" gear="1" ctrllimited="true" ctrlrange="-80 80" />
     <motor name="left_knee_pitch_motor" joint="left_knee_pitch" gear="1" ctrllimited="true" ctrlrange="-80 80" />
+    <motor name="right_wheel_joint_motor" joint="right_wheel_joint" gear="1" ctrllimited="true" ctrlrange="-4 4" />
+    <motor name="left_wheel_joint_motor" joint="left_wheel_joint" gear="1" ctrllimited="true" ctrlrange="-4 4" />
   </actuator>
   <equality>
     <weld name="base_support" body1="robot_base" active="false" />
@@ -150,6 +160,6 @@
     <joint name="left_wheel_lock" joint1="left_wheel_joint" polycoef="0 0 0 0 0" active="true" solref="0.002 1" solimp="0.999 0.999 0.001" />
   </equality>
   <keyframe>
-    <key name="standing" qpos="0 0 0.5359300351575401 1 0 0 0 0.6981317007977318 1.758920130879609 0 0.6981317007977318 1.758920130879609 0 0 0 0 0 0 0" />
+    <key name="standing" qpos="0 0 0.5359300351575401 1 0 0 0 0.6981317007977318 1.758920130879609 0 0 0.6981317007977318 1.758920130879609 0 0 0 0 0 0 0 0" />
   </keyframe>
 </mujoco>

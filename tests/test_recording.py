@@ -227,3 +227,14 @@ def test_mode_and_preview_labels_in_decoded_frames(simulation, tmp_path, monkeyp
                     assert np.mean(np.abs(frame[:30].astype(float) - raw[:30])) < 2
     finally:
         simulation.mode = original_mode
+
+
+def test_swan_evidence_identifies_generated_fullbody_curve():
+    from types import SimpleNamespace
+    from jc04_dancing.simulation import build_timeline
+    result = recording._evidence(SimpleNamespace(timeline=build_timeline('swan_lake')))
+    assert result['motion']['source'] == 'assets/motions/swan_lake.csv'
+    assert result['motion']['interpolation'] == 'quintic'
+    assert result['motion']['generated_choreography'] is True
+    assert result['motion']['wheel_units'] == 'rad/s'
+    assert 'choreography.py' in result['code_sha256']

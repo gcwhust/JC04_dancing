@@ -42,12 +42,14 @@ def validate_targets(model, timeline, timestep: float) -> None:
         for name, value in timeline.sample(t).items():
             joint = model.joint(name)
             low, high = joint.range if joint.limited else (-math.inf, math.inf)
-            if not math.isfinite(value) or value < low - 1e-10 or value > high + 1e-10:
+            # Dense decimal CSV samples can produce <1e-7 rad spline
+            # undershoot at a zero-angle hold; this is not a playback envelope.
+            if not math.isfinite(value) or value < low - 1e-7 or value > high + 1e-7:
                 raise ValueError(f'{name} at t={t:.9f}s: target {value} outside range [{low}, {high}] rad')
 
 
 class Simulation:
-    """Bounded PD motors, explicit wheel brakes and an optional base weld.
+    """Bounded joint PD and wheel velocity motors with an optional base weld.
 
     Only reset writes joint positions. advance_to integrates to an absolute
     time, overshooting by at most one physical step, regardless of render FPS.
@@ -59,7 +61,7 @@ class Simulation:
         self.mode = mode
         config_path = robot_config or resource_path('configs/robot.yaml')
         self.config = yaml.safe_load(Path(config_path).read_text())
-        self.wheel_mode = wheel_mode or self.config['wheels']['mode']
+        self.wheel_mode = wheel_mode or getattr(timeline, 'wheel_mode', self.config['wheels']['mode'])
         self.model = mujoco.MjModel.from_xml_path(str(resource_path(self.config['model']['resource'])))
         self._range_overrides = {}
         for name, limits in self.config['model'].get('joint_range_overrides', {}).items():
@@ -72,6 +74,13 @@ class Simulation:
         self.model.opt.timestep = float(scene['timestep'])
         self.model.opt.gravity[:] = scene['gravity']
         self.model.geom_friction[self.model.geom_contype != 0] = scene['friction']
+        assist_friction = self.config['wheels']['assist_friction']
+        if len(assist_friction) != 3 or not np.isfinite(assist_friction).all() or np.any(np.array(assist_friction) < 0):
+            raise ValueError('Assist friction must contain three finite nonnegative coefficients')
+        for side in ('right', 'left'):
+            contact = self.model.geom(side + '_assist_contact')
+            contact.friction[:] = assist_friction
+            contact.priority[:] = 1
         self.model.geom('floor').size[:2] = scene.get('floor_half_size', 50.0)
         self.names = tuple(self.config['joint_order'])
         if set(self.names) != set(self.config['actuators']) or len(self.names) != 10:
@@ -94,14 +103,25 @@ class Simulation:
         self._wheel_locks = np.array([self.model.equality(name).id for name in wheels['lock_equalities']])
         self._wheel_qadr = np.array([self.model.joint(name).qposadr[0] for name in wheels['joints']])
         self._wheel_vadr = np.array([self.model.joint(name).dofadr[0] for name in wheels['joints']])
+        self._wheel_names = tuple(wheels['joints'])
+        self._wheel_act = np.array([self.model.actuator(name + '_motor').id for name in self._wheel_names])
+        self._wheel_gain = float(wheels['velocity_gain'])
+        self._wheel_limit = float(wheels['max_torque'])
+        self._wheel_speed_limit = float(wheels['max_speed_rad_s'])
+        if not all(math.isfinite(value) and value > 0 for value in
+                   (self._wheel_gain, self._wheel_limit, self._wheel_speed_limit)):
+            raise ValueError('Wheel velocity gain, torque and speed limits must be finite and positive')
+        self.model.actuator_ctrlrange[self._wheel_act] = [-self._wheel_limit, self._wheel_limit]
         self._base = self.model.body('robot_base').id
         self.reset()
 
     def reset(self) -> None:
         if self.mode not in ('free', 'supported'):
             raise ValueError('mode must be free or supported')
-        if self.wheel_mode not in ('locked', 'passive'):
-            raise ValueError('wheel_mode must be locked or passive')
+        if self.wheel_mode not in ('locked', 'passive', 'driven'):
+            raise ValueError('wheel_mode must be locked, passive or driven')
+        if self.wheel_mode == 'driven' and not callable(getattr(self.timeline, 'wheel_velocities', None)):
+            raise ValueError('Driven wheel mode requires timeline.wheel_velocities')
         key = self.model.key(self.config['model']['initial_keyframe']).id
         mujoco.mj_resetDataKeyframe(self.model, self.data, key)
         self.data.eq_active[self._support] = self.mode == 'supported'
@@ -119,6 +139,11 @@ class Simulation:
         self._initial_wheel_angles = self.data.qpos[self._wheel_qadr].copy()
         self._max_wheel_rotation = 0.0
         self._max_wheel_speed = 0.0
+        self._max_wheel_torque = 0.0
+        self._max_wheel_speed_error = 0.0
+        rotation = self.data.xmat[self._base].reshape(3, 3)
+        self._previous_yaw = math.atan2(rotation[1, 0], rotation[0, 0])
+        self._unwrapped_yaw = self._min_yaw = self._max_yaw = 0.0
         self._observe()
 
     def _check_state(self, previous_time: float | None = None) -> None:
@@ -139,7 +164,14 @@ class Simulation:
         displacement = self.data.qpos[self._root_adr:self._root_adr + 2] - self._initial_xy
         self._max_horizontal_displacement = max(self._max_horizontal_displacement, float(np.linalg.norm(displacement)))
         self._min_height = min(self._min_height, float(self.data.xpos[self._base, 2]))
-        upright = self.data.xmat[self._base].reshape(3, 3)[2, 2]
+        rotation = self.data.xmat[self._base].reshape(3, 3)
+        yaw = math.atan2(rotation[1, 0], rotation[0, 0])
+        delta = yaw - self._previous_yaw
+        self._unwrapped_yaw += math.atan2(math.sin(delta), math.cos(delta))
+        self._previous_yaw = yaw
+        self._min_yaw = min(self._min_yaw, self._unwrapped_yaw)
+        self._max_yaw = max(self._max_yaw, self._unwrapped_yaw)
+        upright = rotation[2, 2]
         self._max_tilt = max(self._max_tilt, math.degrees(math.acos(float(np.clip(upright, -1, 1)))))
         if self.data.ncon:
             self._min_contact = min(self._min_contact, float(np.min(self.data.contact.dist)))
@@ -158,7 +190,20 @@ class Simulation:
             error = target - self.data.qpos[self._qadr]
             torque = np.clip(self._kp * error - self._kd * self.data.qvel[self._vadr], -self._limits, self._limits)
             self.data.ctrl[self._act] = torque
-            self._max_torque = max(self._max_torque, float(np.max(np.abs(torque))))
+            wheel_torque = np.zeros(2)
+            if self.wheel_mode == 'driven':
+                command = self.timeline.wheel_velocities(now)
+                if set(command) != set(self._wheel_names):
+                    raise ValueError('Wheel commands must provide exactly the two driven wheel joints')
+                wheel_target = np.array([command[name] for name in self._wheel_names])
+                if not np.isfinite(wheel_target).all() or np.any(np.abs(wheel_target) > self._wheel_speed_limit):
+                    raise ValueError(f'wheel velocities at t={now}s must be finite and within +/-{self._wheel_speed_limit} rad/s')
+                wheel_error = wheel_target - self.data.qvel[self._wheel_vadr]
+                wheel_torque = np.clip(self._wheel_gain * wheel_error, -self._wheel_limit, self._wheel_limit)
+                self._max_wheel_speed_error = max(self._max_wheel_speed_error, float(np.max(np.abs(wheel_error))))
+            self.data.ctrl[self._wheel_act] = wheel_torque
+            self._max_wheel_torque = max(self._max_wheel_torque, float(np.max(np.abs(wheel_torque))))
+            self._max_torque = max(self._max_torque, float(np.max(np.abs(torque))), self._max_wheel_torque)
             self._max_error = max(self._max_error, float(np.max(np.abs(error))))
             mujoco.mj_step(self.model, self.data)
             self._check_state(now)
@@ -172,11 +217,14 @@ class Simulation:
             'wheel_mode': self.wheel_mode,
             'max_wheel_rotation_rad': self._max_wheel_rotation,
             'max_wheel_speed_rad_s': self._max_wheel_speed,
+            'max_wheel_torque_nm': self._max_wheel_torque,
+            'max_wheel_speed_error_rad_s': self._max_wheel_speed_error,
             'timeline_duration_s': self.timeline.total_duration,
             'requested_time_s': self._requested_time, 'simulation_time_s': float(self.data.time),
             'timestep_s': float(self.model.opt.timestep), 'steps': self._steps,
             'max_abs_torque_nm': self._max_torque, 'max_joint_error_rad': self._max_error,
             'min_base_height_m': self._min_height, 'max_base_tilt_deg': self._max_tilt,
+            'base_yaw_excursion_deg': math.degrees(self._max_yaw - self._min_yaw),
             'min_contact_distance_m': self._min_contact,
             'max_horizontal_displacement_m': self._max_horizontal_displacement,
             'final_base_position_m': self.data.qpos[self._root_adr:self._root_adr + 3].tolist(),

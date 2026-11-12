@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "dance_id": "swan_lake",
+  "title": "天鹅湖 · 展翼与湖面滑行",
+  "authorship": "Original JC04 joint-space choreography, authored for this project.",
+  "duration_s": 94.0,
+  "fps": 30.0,
+  "sample_count": 2821,
+  "angle_units": "degrees",
+  "wheel_velocity_units": "rad/s",
+  "wheel_mode": "driven",
+  "interpolation": "Piecewise quintic pose score; dense CSV playback uses a degree-five spline with C2 endpoints.",
+  "music_timing": {
+    "reference_excerpt_duration_s": 94.0,
+    "reference_source_start_s": 55.2,
+    "reference_source_end_s": 149.2,
+    "anchor_method": "Acoustic envelope and spectrogram phrase candidates; not manually verified beat annotations.",
+    "beat_verified": false,
+    "retimed_from_reference": false
+  },
+  "leg_geometry": "Each side keeps knee minus hip at 60.7787 degrees; common leg offsets preserve support orientation.",
+  "sections": [
+    {
+      "id": "opening_wings",
+      "name": "展翼",
+      "start_s": 0.0,
+      "end_s": 12.4,
+      "description": "Both wings open through a soft plié; the wheels begin a gentle forward glide."
+    },
+    {
+      "id": "glides_and_plies",
+      "name": "滑行与屈伸",
+      "start_s": 12.4,
+      "end_s": 24.8,
+      "description": "Broad symmetric wings accompany visible leg extension, plié and a controlled retreat."
+    },
+    {
+      "id": "answering_curves",
+      "name": "左右应答与弧线",
+      "start_s": 24.8,
+      "end_s": 44.3,
+      "description": "Alternating high wings answer each other while differential wheel speeds trace two gentle curves."
+    },
+    {
+      "id": "building_flight",
+      "name": "渐强飞翔",
+      "start_s": 44.3,
+      "end_s": 64.8,
+      "description": "The wing gestures broaden over coordinated rise and sink; the forward glide grows then eases."
+    },
+    {
+      "id": "swan_climax",
+      "name": "天鹅高展",
+      "start_s": 64.8,
+      "end_s": 67.4,
+      "description": "Both wings reach their highest crown as the legs extend and the wheels come to rest."
+    },
+    {
+      "id": "floating_release",
+      "name": "舒缓回落",
+      "start_s": 67.4,
+      "end_s": 86.8,
+      "description": "Asymmetric wings soften into a retreat with gentle counter-curves and decreasing travel."
+    },
+    {
+      "id": "reverence",
+      "name": "谢幕",
+      "start_s": 86.8,
+      "end_s": 94.0,
+      "description": "A deliberate plié and gathered wings resolve to the standing pose and still wheels."
+    }
+  ],
+  "pose_events": [
+    {
+      "body_time_s": 0.0,
+      "name": "quiet_preparation"
+    },
+    {
+      "body_time_s": 3.1,
+      "name": "first_wing_unfolding"
+    },
+    {
+      "body_time_s": 6.2,
+      "name": "open_water"
+    },
+    {
+      "body_time_s": 9.3,
+      "name": "soft_wing_descent"
+    },
+    {
+      "body_time_s": 12.4,
+      "name": "first_high_arc"
+    },
+    {
+      "body_time_s": 15.5,
+      "name": "glide_and_fold"
+    },
+    {
+      "body_time_s": 18.6,
+      "name": "long_forward_glide"
+    },
+    {
+      "body_time_s": 21.7,
+      "name": "gather_and_retreat"
+    },
+    {
+      "body_time_s": 24.8,
+      "name": "answering_wing"
+    },
+    {
+      "body_time_s": 28.05,
+      "name": "right_curve"
+    },
+    {
+      "body_time_s": 31.3,
+      "name": "right_curve_extension"
+    },
+    {
+      "body_time_s": 34.55,
+      "name": "wings_cross_the_phrase"
+    },
+    {
+      "body_time_s": 37.8,
+      "name": "left_answer"
+    },
+    {
+      "body_time_s": 41.05,
+      "name": "left_curve_extension"
+    },
+    {
+      "body_time_s": 44.3,
+      "name": "gather_before_flight"
+    },
+    {
+      "body_time_s": 47.7,
+      "name": "rising_wingbeat"
+    },
+    {
+      "body_time_s": 51.1,
+      "name": "flowing_right_wing"
+    },
+    {
+      "body_time_s": 54.5,
+      "name": "flowing_left_wing"
+    },
+    {
+      "body_time_s": 57.9,
+      "name": "wide_swan_arc"
+    },
+    {
+      "body_time_s": 61.3,
+      "name": "deep_plie_before_climax"
+    },
+    {
+      "body_time_s": 65.9,
+      "name": "full_swan_crown"
+    },
+    {
+      "body_time_s": 69.0,
+      "name": "release_into_quiet"
+    },
+    {
+      "body_time_s": 70.6,
+      "name": "floating_right_response"
+    },
+    {
+      "body_time_s": 73.8,
+      "name": "soft_gather"
+    },
+    {
+      "body_time_s": 77.0,
+      "name": "floating_left_response"
+    },
+    {
+      "body_time_s": 80.2,
+      "name": "last_wide_wing"
+    },
+    {
+      "body_time_s": 83.5,
+      "name": "lower_the_wings"
+    },
+    {
+      "body_time_s": 86.8,
+      "name": "reverence_begins"
+    },
+    {
+      "body_time_s": 89.2,
+      "name": "reverence"
+    },
+    {
+      "body_time_s": 92.2,
+      "name": "settle_at_rest"
+    },
+    {
+      "body_time_s": 94.0,
+      "name": "final_stillness"
+    }
+  ]
+}

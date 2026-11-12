@@ -195,3 +195,11 @@ def test_zero_fades_preserve_early_and_late_music_amplitude(silent_run, tmp_path
     # Original 14000/32768 sine has RMS .302; neither end should fade down.
     assert np.sqrt(np.mean(samples[97440:99840] ** 2)) > .25
     assert np.sqrt(np.mean(samples[130560:132960] ** 2)) > .25
+
+
+def test_default_soundtrack_is_swan_lake(silent_run, tmp_path):
+    from jc04_dancing.audio import add_audio_to_run
+    source, _ = silent_run
+    result = add_audio_to_run(source, tmp_path / 'swan-default')
+    assert result['audio']['source_resource'] == 'assets/audio/swan_lake.mp3'
+    assert result['audio']['decoded_active_rms'] > 1e-4

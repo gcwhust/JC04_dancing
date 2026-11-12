@@ -19,7 +19,7 @@ from .resources import resource_path
 
 
 _RATE = 48000
-_DEFAULT_MUSIC = 'assets/audio/happy_new_year.mp3'
+_DEFAULT_MUSIC = 'assets/audio/swan_lake.mp3'
 
 
 def _sha256(path: Path) -> str:
@@ -153,8 +153,8 @@ def _rms(samples: np.ndarray) -> float:
 
 
 def add_audio_to_run(run_dir: Path, output_dir: Path, audio_path: Path | None = None,
-                     timeline_start_seconds: float = 2., fade_in_seconds: float = .4,
-                     fade_out_seconds: float = .8) -> dict:
+                     timeline_start_seconds: float = 2., fade_in_seconds: float = 0.,
+                     fade_out_seconds: float = 0.) -> dict:
     """Stream-copy H.264, add unlooped original-speed AAC, and publish atomically.
 
     Music starts at source time zero. Fades apply within the usable original

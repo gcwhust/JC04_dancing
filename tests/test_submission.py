@@ -44,6 +44,9 @@ def test_submission_names(packaged, run_dir):
     assert metadata['audio']['D04_verified'] is False
     assert metadata['audio']['status'] == 'postproduction_pending'
     assert metadata['simulation']['mode'] == 'free'
+    assert metadata['dance_id'] == 'swan_lake'
+    assert 'generated' in metadata['originality']
+    assert 'Swan Lake' in metadata['originality']
     report = json.loads((folder / 'report.json').read_text())
     assert report['source']['run_sha256'] == sha(run_dir / 'run.json')
     assert report['simulation']['mode'] == metadata['simulation']['mode']
@@ -62,12 +65,13 @@ def test_source_whitelist(packaged, tmp_path):
                     'tools/convert_model.py', 'tests/test_submission.py', 'docs/validation.md',
                     'src/jc04_dancing/submission.py', 'src/jc04_dancing/assets/report/template.md',
                     'src/jc04_dancing/assets/report/fonts/DroidSansFallbackFull.ttf',
-                    'src/jc04_dancing/assets/robot/robot.xml', 'src/jc04_dancing/assets/audio/happy_new_year.mp3',
-                    'src/jc04_dancing/assets/motions/happy_new_year.csv']
+                    'src/jc04_dancing/assets/robot/robot.xml', 'src/jc04_dancing/assets/audio/swan_lake.mp3',
+                    'src/jc04_dancing/assets/audio/swan_lake_source.json',
+                    'src/jc04_dancing/assets/motions/swan_lake.csv',
+                    'src/jc04_dancing/assets/motions/swan_lake.phrases.json']
         assert set(required) <= names
         assert {name for name in names if name.endswith('.csv')} == {
-            'src/jc04_dancing/assets/motions/happy_new_year.csv',
-            'src/jc04_dancing/assets/motions/doudoulong_postprocess.csv',
+            'src/jc04_dancing/assets/motions/swan_lake.csv',
         }
         assert not any(part in {'.git', '.superpowers', 'outputs', '__pycache__', 'submission'} or
                        part.startswith('JC04-master-') for name in names for part in Path(name).parts)

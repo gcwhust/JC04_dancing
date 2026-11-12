@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="小楚 JC04 轮足机器人在 MuJoCo 中的新年与豆豆龙完整舞蹈仿真，提供视频与复现源码。">
+  <meta name="description" content="小楚 JC04 轮足机器人在 MuJoCo 中的《天鹅湖》手、腿、轮协同舞蹈仿真，提供视频与复现源码。">
   <title>小楚机器人 · 舞蹈仿真</title>
   <style>
     :root { color-scheme: light; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #17324a; background: #f3f7fb; }
@@ -33,47 +33,26 @@
 <body>
   <main>
     <div class="eyebrow">JC04 DANCING / MUJOCO</div>
-    <h1>小楚机器人 · 舞蹈仿真</h1>
-    <p class="intro">双臂随动作展开，髋膝协调运动。以完整物理仿真呈现小楚轮足机器人的新年与豆豆龙两支舞蹈。</p>
-    <nav class="jump-links" aria-label="选择舞蹈">
-      <a href="#new-year">新年 · 含配乐</a>
-      <a href="#doudoulong">豆豆龙 · 含配乐</a>
-      <a href="https://github.com/gcwhust/JC04_dancing#readme">源码与复现步骤</a>
-    </nav>
-
-    <section class="dance" id="new-year" aria-labelledby="new-year-title">
-      <h2 id="new-year-title">新年</h2>
+    <h1>小楚机器人 · 天鹅湖</h1>
+    <p class="intro">双臂展翼，髋膝起伏，车轮随乐句滑行与转向。用重新编排的动作，呈现手、腿、轮的连贯配合。</p>
+    <section class="dance" id="swan-lake" aria-labelledby="swan-title">
+      <h2 id="swan-title">完整舞蹈</h2>
       <div class="player">
-        <video controls playsinline preload="metadata" poster="media/dance-poster.png" aria-label="新年完整舞蹈，背景配乐从第 2 秒开始，无对白">
-          <source src="media/dance.mp4" type="video/mp4">
-          当前浏览器不支持视频播放，请<a href="media/dance.mp4">下载新年 MP4 视频</a>。
+        <video controls playsinline preload="metadata" poster="media/swan-lake-poster.png" aria-label="小楚机器人天鹅湖舞蹈，含配乐，无对白">
+          <source src="media/swan-lake.mp4?v=8bcce73d" type="video/mp4">
+          当前浏览器不支持播放，请<a href="media/swan-lake.mp4?v=8bcce73d">下载 MP4 视频</a>。
         </video>
-        <div class="caption"><span>83.333 秒 · 2500 帧</span><span>1920 × 1080 · 30 FPS</span><span>含配乐 · 第 2 秒开始</span></div>
+        <div class="caption"><span>99 秒 · 1920 × 1080 · 30 FPS</span><span>《天鹅湖》配乐 · 第 2 秒进入</span><span>手 · 腿 · 轮协同</span></div>
       </div>
-      <nav class="links" aria-label="新年视频与资料">
-        <a href="media/dance.mp4" download>下载新年完整视频</a>
-        <a href="media/design.pdf">新年设计说明</a>
-        <a href="media/workflow.png">新年运行流程图</a>
+      <nav class="links" aria-label="视频与资料">
+        <a href="media/swan-lake.mp4?v=8bcce73d" download>下载完整有声视频</a>
+        <a href="https://github.com/gcwhust/JC04_dancing#readme">源码与完整复现步骤</a>
+        <a href="media/design.pdf">设计说明</a>
+        <a href="media/workflow.png">运行流程图</a>
       </nav>
-      <p class="note">点击播放即可观看。前 2 秒是准备动作；若没有声音，请打开播放器的音量。</p>
+      <p class="note">点击播放，打开音量。前 2 秒是准备动作，随后音乐与舞蹈主体同时开始。</p>
     </section>
-
-    <section class="dance" id="doudoulong" aria-labelledby="doudoulong-title">
-      <h2 id="doudoulong-title">豆豆龙</h2>
-      <div class="player">
-        <video controls playsinline preload="metadata" poster="media/doudoulong-poster.png" aria-label="豆豆龙完整舞蹈，复用新年背景配乐，从第 2 秒开始，无对白">
-          <source src="media/doudoulong.mp4?v=e7869ba4" type="video/mp4">
-          当前浏览器不支持视频播放，请<a href="media/doudoulong.mp4?v=e7869ba4">下载豆豆龙 MP4 视频</a>。
-        </video>
-        <div class="caption"><span>85 秒 · 2550 帧</span><span>1920 × 1080 · 30 FPS</span><span>含配乐 · 第 2 秒开始</span></div>
-      </div>
-      <nav class="links" aria-label="豆豆龙视频与资料">
-        <a href="media/doudoulong.mp4?v=e7869ba4" download>下载豆豆龙完整视频</a>
-        <a href="https://github.com/gcwhust/JC04_dancing#readme">豆豆龙录制与配乐步骤</a>
-      </nav>
-      <p class="note">完整录像保留准备、舞蹈主体和回位动作。复用新年的现有背景音乐，节拍配合尚未验证；音乐结束后静音至片尾。配乐复现与替换方法见 README。</p>
-    </section>
-    <footer>两支舞蹈均采用浮动机身与驱动轮制动约束，保留机器人和地面的物理接触。模型、动作、配置及运行工具均随仓库提供。当前设计说明和提交材料生成功能仅支持新年。</footer>
+    <footer>基于 MuJoCo 的物理仿真。配乐为柴可夫斯基《天鹅湖》节选；<a href="https://github.com/gcwhust/JC04_dancing/blob/main/docs/audio-provenance.md">录音来源与说明</a>。模型、动作生成器与 CSV 随仓库提供。</footer>
   </main>
 </body>
 </html>

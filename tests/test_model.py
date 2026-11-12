@@ -23,8 +23,8 @@ def test_joints_and_actuators(model):
     original = ET.parse(resource_path('assets/robot/jc04.urdf')).getroot()
     names = {j.get('name') for j in original.findall('joint') if j.get('type') != 'fixed'}
     actual = {model.joint(i).name for i in range(model.njnt)}
-    assert actual == names | {'root'}
-    assert model.nu == 10
+    assert actual == names | {'root', 'right_assist', 'left_assist'}
+    assert model.nu == 12
     assert np.flatnonzero(model.jnt_type == mujoco.mjtJoint.mjJNT_FREE).tolist() == [model.joint('root').id]
     config = yaml.safe_load(resource_path('configs/robot.yaml').read_text())
     for name, settings in config['actuators'].items():
@@ -41,6 +41,13 @@ def test_joints_and_actuators(model):
         assert brake.type == mujoco.mjtEq.mjEQ_JOINT
         assert brake.obj1id == model.joint(side + '_wheel_joint').id
         assert brake.obj2id == -1
+    # Auxiliary wheels have physical bearings but no added control channels.
+    for side in ('right', 'left'):
+        assist = model.joint(side + '_assist')
+        assert assist.type == mujoco.mjtJoint.mjJNT_HINGE
+        assert assist.id not in model.actuator_trnid[:, 0]
+        motor = model.actuator(side + '_wheel_joint_motor')
+        assert motor.trnid[0] == model.joint(side + '_wheel_joint').id
     assert model.camera('overview').id >= 0
 
 
@@ -134,7 +141,7 @@ def test_conversion_uses_packaged_assets_and_rebuilds_from_other_cwd(tmp_path):
     result = subprocess.run([sys.executable, str(script), '--urdf', str(robot / 'jc04.urdf'), '--output', str(output)], cwd=tmp_path, capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     rebuilt = mujoco.MjModel.from_xml_path(str(output))
-    assert rebuilt.nu == 10
+    assert rebuilt.nu == 12
     assert output.read_bytes() == resource_path('assets/robot/robot.xml').read_bytes()
 
 

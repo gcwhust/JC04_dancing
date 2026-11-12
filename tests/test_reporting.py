@@ -13,6 +13,7 @@ import pytest
 import yaml
 
 from jc04_dancing.resources import resource_path
+from jc04_dancing.simulation import build_timeline
 
 
 def sha(path):
@@ -24,7 +25,12 @@ def run_dir(tmp_path_factory):
     """Small, encoded video with the real recorder schema; no production outputs required."""
     root = tmp_path_factory.mktemp('report-run')
     (root / 'stills').mkdir()
-    duration, fps = 83 + 1 / 3, 2
+    timeline = build_timeline('swan_lake')
+    dances = yaml.safe_load(resource_path('configs/dances.yaml').read_text())
+    dance = dances['dances']['swan_lake']
+    phrases_path = dance['phrases']
+    phrases = json.loads(resource_path(phrases_path).read_text())
+    duration, fps = timeline.total_duration, 2
     count = math.ceil(duration * fps)
     writer = imageio_ffmpeg.write_frames(str(root / 'dance.mp4'), (64, 64), fps=fps,
                                         codec='libx264', macro_block_size=1)
@@ -34,8 +40,10 @@ def run_dir(tmp_path_factory):
         pixels = np.stack([(x * 4 + index) % 256, y * 4, (x + y) * 2], axis=2).astype(np.uint8)
         writer.send(pixels.tobytes())
     writer.close()
-    samples = {0: 'start', 6: 'C01-side-open', 13: 'C02-front-high',
-               130: 'C03-left-flex', 132: 'C03-right-flex', count - 1: 'end'}
+    samples = {0: 'start', count - 1: 'end'}
+    for section in phrases['sections']:
+        sample_time = timeline.prep + (section['start_s'] + section['end_s']) / 2
+        samples[round(sample_time * fps)] = section['id']
     reader = imageio_ffmpeg.read_frames(str(root / 'dance.mp4'))
     next(reader)
     stills = []
@@ -47,7 +55,7 @@ def run_dir(tmp_path_factory):
                            'file': name, 'actual_driven_joint_rad': {'right_elbow_pitch': .1}})
     config = yaml.safe_load(resource_path('configs/robot.yaml').read_text())
     resources = ['configs/robot.yaml', 'configs/dances.yaml', 'assets/provenance.json',
-                 'assets/robot/robot.xml', 'assets/motions/happy_new_year.csv']
+                 'assets/robot/robot.xml', dance['file'], phrases_path]
     data = {
         'schema_version': 1, 'status': 'complete', 'mode': 'free', 'preview': False,
         'timeline_complete': True,
@@ -60,9 +68,10 @@ def run_dir(tmp_path_factory):
         'config': config, 'versions': {'python': '3.10.22', 'mujoco': '3.3.7', 'numpy': '2.2.6',
                                      'Pillow': '12.0.0', 'imageio-ffmpeg': '0.6.0', 'ffmpeg': 'test fixture'},
         'render_backend': 'egl', 'camera': {'physics_recentered': False, 'follow': 'physical_base_xy'},
-        'simulation': {'dance_id': 'new_year', 'mode': 'free', 'wheel_mode': 'locked',
+        'simulation': {'dance_id': 'swan_lake', 'mode': 'free', 'wheel_mode': 'driven',
                        'timeline_duration_s': duration, 'requested_time_s': duration,
-                       'simulation_time_s': 83.3335, 'timestep_s': .0005, 'steps': 166667,
+                       'simulation_time_s': math.ceil(duration / .0005) * .0005,
+                       'timestep_s': .0005, 'steps': math.ceil(duration / .0005),
                        'max_abs_torque_nm': 18.8274, 'max_joint_error_rad': .3047,
                        'min_base_height_m': .5161, 'max_base_tilt_deg': 7.408,
                        'min_contact_distance_m': -.000776, 'max_horizontal_displacement_m': .0333926,
@@ -72,10 +81,13 @@ def run_dir(tmp_path_factory):
                                                  for joint in ['right_shoulder_roll', 'left_shoulder_roll']}},
         'evidence': {'resource_sha256': {name: sha(resource_path(name)) for name in resources},
                      'code_sha256': {'cli.py': 'a' * 64},
-                     'motion': {'source': 'assets/motions/happy_new_year.csv', 'source_fps': 24,
-                                'original_bytes_unchanged': True, 'clip_duration_s': 78 + 1 / 3,
-                                'clip_start_s': 0, 'prep_s': 2, 'return_s': 2, 'hold_s': 1,
-                                'interpolation': 'cubic'}},
+                     'motion': {'source': dance['file'], 'source_fps': dance['fps'],
+                                'original_bytes_unchanged': False, 'generated_choreography': True,
+                                'clip_duration_s': timeline.clip.duration,
+                                'clip_start_s': timeline.clip.start, 'prep_s': timeline.prep,
+                                'return_s': timeline.return_time, 'hold_s': timeline.hold,
+                                'interpolation': 'quintic', 'wheel_units': 'rad/s',
+                                'phrases_source': phrases_path}},
         'stills': stills,
     }
     (root / 'run.json').write_text(json.dumps(data))
@@ -109,9 +121,12 @@ def test_report_sections(rendered_report, run_dir):
     assert metadata['source']['run_sha256'] == sha(run_dir / 'run.json')
     assert metadata['source']['video_sha256'] == sha(run_dir / 'dance.mp4')
     assert metadata['audio']['D04_verified'] is False
-    assert metadata['simulation']['wheel_mode'] == 'locked'
+    assert metadata['simulation']['wheel_mode'] == 'driven'
     assert metadata['checks']['stills_match_video'] is True
-    assert len(metadata['motion_classes']) == 3
+    assert len(metadata['choreography_sections']) == 7
+    assert metadata['choreography_sections'][0]['body_time_s'] == [0.0, 12.4]
+    assert metadata['choreography_sections'][-1]['body_time_s'] == [86.8, 94.0]
+    assert '12' in text and '协调' in text and '保持锁定' not in text
     assert len(metadata['images']) == 1
     assert metadata['images'][0]['label'] == 'start'
     assert json.loads((root / 'report.json').read_text()) == metadata
@@ -125,7 +140,7 @@ def test_missing_evidence(tmp_path):
     assert not (tmp_path / 'report.pdf').exists()
 
 
-@pytest.mark.parametrize('mutation', ['failed', 'preview', 'fallen', 'nan', 'frames', 'hash', 'missing_still', 'path', 'resource', 'metric_type', 'motion_frame', 'duplicate_label'])
+@pytest.mark.parametrize('mutation', ['failed', 'preview', 'fallen', 'nan', 'frames', 'hash', 'missing_still', 'path', 'resource', 'metric_type', 'motion_frame', 'duplicate_label', 'locked_wheels', 'legacy_motion', 'legacy_interpolation', 'invented_original', 'clip_duration', 'missing_phrases_hash'])
 def test_invalid_run_rejected(run_dir, tmp_path, mutation):
     from jc04_dancing.reporting import build_report
     import shutil
@@ -146,9 +161,15 @@ def test_invalid_run_rejected(run_dir, tmp_path, mutation):
     if mutation == 'metric_type': data['simulation']['max_horizontal_displacement_m'] = 'unverified'
     if mutation == 'motion_frame':
         first = data['stills'][0]
-        motion = next(item for item in data['stills'] if item['label'] == 'C01-side-open')
+        motion = next(item for item in data['stills'] if item['label'] not in ('start', 'end', 'mid'))
         motion.update(file=first['file'], frame=first['frame'], sample_time_s=first['sample_time_s'])
     if mutation == 'duplicate_label': data['stills'].append(data['stills'][0])
+    if mutation == 'locked_wheels': data['simulation']['wheel_mode'] = 'locked'
+    if mutation == 'legacy_motion': data['evidence']['motion']['source'] = 'assets/motions/happy_new_year.csv'
+    if mutation == 'legacy_interpolation': data['evidence']['motion']['interpolation'] = 'cubic'
+    if mutation == 'invented_original': data['evidence']['motion']['generated_choreography'] = False
+    if mutation == 'clip_duration': data['evidence']['motion']['clip_duration_s'] -= 1
+    if mutation == 'missing_phrases_hash': data['evidence']['resource_sha256'].pop('assets/motions/swan_lake.phrases.json')
     (copied_run / 'run.json').write_text(json.dumps(data))
     with pytest.raises((ValueError, FileNotFoundError)):
         build_report(copied_run, tmp_path / 'output/report.pdf')

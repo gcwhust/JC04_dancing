@@ -1,97 +1,63 @@
 # JC04 Dancing / 小楚机器人舞蹈仿真
 
-基于 **MuJoCo** 的小楚 JC04 机器人舞蹈仿真工程，包含机器人模型、新年与豆豆龙两支舞蹈、视频录制、配乐、中文设计说明及提交材料生成工具。小楚拥有 **12 个自由度**：下肢 6 个（双髋、双膝、双驱动轮），上肢 6 个（双肩 pitch / roll、双肘 pitch）。
+小楚 JC04 在 **MuJoCo 3.3.7** 中演绎《天鹅湖》。重新编排的动作把双臂展收、髋膝屈伸、轮式滑行与转向写入同一份 CSV，由同一仿真时钟执行。
 
-## 舞蹈预览
+[![点击播放完整有声视频](docs/media/swan-lake-preview.gif)](https://gcwhust.github.io/JC04_dancing/#swan-lake)
 
-### 新年 · `new_year`
+**[▶ 观看完整有声视频](https://gcwhust.github.io/JC04_dancing/#swan-lake)** · 1920 × 1080 · 30 FPS。上方 GIF 无声，点击打开有声播放器。
 
-[![点击观看新年完整舞蹈视频](docs/media/dance-preview.gif)](https://gcwhust.github.io/JC04_dancing/#new-year)
+## 机器人与仿真
 
-**[▶ 观看新年完整有声视频](https://gcwhust.github.io/JC04_dancing/#new-year)** · 83.333 秒 · 1920 × 1080 · 30 FPS
+![小楚机器人仿真模型](docs/model-initial.png)
 
-### 豆豆龙 · `doudoulong`
+轮足机器人 JC04 具有 **12 个主动自由度**：下肢包括左右髋关节、左右膝关节和左右主动轮，共 6 个自由度；上肢包括左右肩部俯仰、肩部横滚及肘部俯仰关节，共 6 个自由度。头部下方为躯干，两侧为双臂；髋膝连杆连接躯干与主动轮，辅助轮用于四轮模式的支撑。
 
-[![点击观看豆豆龙完整舞蹈视频](docs/media/doudoulong-preview.gif)](https://gcwhust.github.io/JC04_dancing/#doudoulong)
+舞蹈采用自由浮动机身和真实轮地接触。10 个臂腿关节通过 PD 力矩控制，两个主轮通过轮速闭环控制；辅助轮增加被动滚动关节，并以低摩擦接触近似其滚子结构。CSV 中的轮速驱动机身移动，播放过程不改写机身位置。物理步长为 0.0005 秒，镜头跟随实际机身水平位置。
 
-**[▶ 观看豆豆龙完整有声视频](https://gcwhust.github.io/JC04_dancing/#doudoulong)** · 85 秒 · 1920 × 1080 · 30 FPS
-
-两张预览 GIF 均无声，点击可播放对应完整有声视频。两支舞蹈的配乐均从第 2 秒、舞蹈主体开始时进入；豆豆龙复用新年的现有背景音乐，节拍配合尚未验证。
-
-## 仿真模型
-
-![小楚 JC04 仿真模型](docs/model-initial.png)
-
-模型保留全部 12 个活动关节。默认 `free` 模式下机身可自由运动，双驱动轮采用角位置约束模拟锁止，10 个臂腿关节由力矩控制器驱动。**锁轮不冻结机身在世界坐标中的位置**，物理步长为 **0.0005 秒**。
-
-`supported` 模式会固定机身，仅用于调试。肩 roll 和肘 pitch 的仿真限位为容纳舞蹈有所扩展，尚未验证真机活动范围；接触、自碰撞和辅助轮也采用简化模型。详见[模型转换与接触说明](docs/model-conversion.md)。
+模型来自 jc04_desc4 V1.3。碰撞外形、辅助轮和摩擦参数为仿真近似，未验证真机动作范围；`supported` 模式固定机身，仅供调试。[模型转换说明](docs/model-conversion.md)记录具体设置。
 
 ## 安装
 
-已验证环境：**Ubuntu 22.04 x86_64、Python 3.10.22、MuJoCo 3.3.7**。以下命令在仓库根目录执行；请先安装 Conda。
+已使用的环境为 Ubuntu 22.04 x86_64、Python 3.10.22。以下命令在仓库根目录执行：
 
 ```bash
 git clone https://github.com/gcwhust/JC04_dancing.git
 cd JC04_dancing
-
 sudo apt-get update
 sudo apt-get install -y libegl1 libgl1 libglfw3 libosmesa6
-
 conda env create -f environment.yml
 conda activate jc04_dancing
 python -m pip install .
 ```
 
-环境文件使用 `requirements-lock.txt` 锁定依赖。安装包自带模型、网格、动作 CSV、配乐、报告字体和模板，安装后可在其他目录运行。视频编码使用 `imageio-ffmpeg` 提供的 FFmpeg，无需另装系统 FFmpeg 或中文字体。
+模型、网格、动作 CSV、配乐和中文字体随安装包提供，无需原始控制工程。FFmpeg 由 `imageio-ffmpeg` 提供。安装后也可从其他目录运行。
 
-## 查看与播放舞蹈
+## 复现完整仿真与有声视频
 
-内置两支舞蹈，原动作采样率均为 24 FPS：
-
-| 参数 `--dance` | 舞蹈 |
-|---|---|
-| `new_year` | 新年（默认） |
-| `doudoulong` | 豆豆龙 |
-
-在有桌面的终端打开交互仿真窗口：
+### 1. 检查与交互播放
 
 ```bash
 python -m jc04_dancing list
-python -m jc04_dancing play --dance new_year --mode free
-python -m jc04_dancing play --dance doudoulong --mode free
+MUJOCO_GL=egl python -m jc04_dancing check --dance swan_lake --mode free
+# 有桌面的终端可打开交互窗口
+python -m jc04_dancing play --dance swan_lake --mode free
 ```
 
-关闭窗口即可结束播放。交互播放展示机器人动作，配乐在后续视频合成时加入。
+`check` 完整执行物理仿真，输出跌倒、数值警告、关节误差、轮速和移动距离等信息。交互窗口展示动作；音乐在视频合成步骤加入。
 
-无桌面环境可先列出舞蹈并检查完整仿真：
-
-```bash
-MUJOCO_GL=egl python -m jc04_dancing list
-MUJOCO_GL=egl python -m jc04_dancing check --dance new_year --mode free
-MUJOCO_GL=egl python -m jc04_dancing check --dance doudoulong --mode free
-```
-
-`check` 输出包含仿真时长、跌倒状态和数值警告的 JSON。无头渲染需要可用的 EGL；使用 NVIDIA GPU 时还需相应驱动。务必在启动 Python 前设置 `MUJOCO_GL=egl`。支持 OSMesa 的系统也可尝试 `MUJOCO_GL=osmesa`，本项目已验证的后端为 EGL。
-
-## 录像与新年提交材料复现
-
-### 1. 录制完整仿真
+### 2. 录制画面
 
 ```bash
 MUJOCO_GL=egl python -m jc04_dancing record \
-  --dance new_year --mode free \
+  --dance swan_lake --mode free \
   --output outputs/reproduced/dance.mp4
-
-MUJOCO_GL=egl python -m jc04_dancing record \
-  --dance doudoulong --mode free \
-  --output outputs/doudoulong/dance.mp4
 ```
 
-默认录制全长 **1920 × 1080、30 FPS** 无声 H.264 视频。`new_year` 生成 **2500 帧、83.333 秒**，`doudoulong` 生成 **2550 帧、85 秒**；各自保存 `run.json` 和 `stills/` 截图。录制耗时取决于硬件，首次运行可能需要数分钟。
+默认完整录制 **99 秒、2970 帧**（2 秒准备 + 94 秒主体 + 2 秒回位 + 1 秒保持），1920 × 1080、30 FPS 的 H.264 视频，并保存 `run.json` 和实际帧截图 `stills/`。输出目录必须为空；重录时使用新的目录。首次模型加载和完整录制可能需要数分钟。
 
-仅预览时可追加 `--duration 5 --width 960 --height 540`；正式报告需使用完整录像。录像目录必须为空，重录时请换一个输出目录。
+无桌面环境需在启动 Python 前设置 `MUJOCO_GL=egl`，并安装可用的 EGL/显卡驱动。短预览可追加 `--duration 10 --width 960 --height 540`，画面会标注 PREVIEW，不能作为正式材料。
 
-### 2. 加入配乐
+### 3. 合成《天鹅湖》配乐
 
 ```bash
 python -m jc04_dancing add-audio \
@@ -99,76 +65,37 @@ python -m jc04_dancing add-audio \
   --output outputs/reproduced_audio
 ```
 
-生成 `outputs/reproduced_audio/dance.mp4`，保留原视频画面和时间轴，加入 AAC 立体声音轨。默认使用包内新年配乐，原速从 **2 秒** 开始，淡入 0.4 秒、淡出 0.8 秒，音乐结束后补静音至全片结束。
+生成 `outputs/reproduced_audio/dance.mp4`。默认使用包内《天鹅湖》节选，从第 2 秒的舞蹈主体起点进入，按原速播放。合成保留视频编码，逐帧核对画面，检查 AAC 立体声音轨确有非静音内容。前奏准备与回位留有短暂静音。
 
-豆豆龙复用同一首包内背景音乐，执行以下命令即可复现有声成片：
+用浏览器或普通播放器打开有声 MP4；VS Code SSH 内置预览的音频支持可能不同。播放器音量需打开。音乐来源、节选范围和时间点见[配乐说明](docs/audio-provenance.md)，编排与数据说明见[动作说明](docs/dance-analysis.md)。
 
-```bash
-python -m jc04_dancing add-audio \
-  --run-dir outputs/doudoulong \
-  --output outputs/doudoulong_audio
-```
-
-两支视频中的音乐均约在第 78.32 秒结束，随后补静音至各自片尾。可追加 `--audio /path/to/music.mp3` 替换为自备音乐，或使用 `--timeline-start-seconds`、`--fade-in-seconds`、`--fade-out-seconds` 调整进入时间和淡入淡出。建议用浏览器或常规视频播放器试听；部分编辑器内置预览可能不支持 AAC 音频。
-
-### 3. 生成新年中文设计说明与流程图
+### 4. 生成设计说明与比赛材料
 
 ```bash
 python -m jc04_dancing report \
   --run-dir outputs/reproduced_audio \
   --output outputs/reproduced_report/report.pdf
-```
 
-输出 `report.pdf`、`report.json`、`flowchart.pdf` 和 `flowchart.png`。生成前会检查完整视频、运行记录及截图是否一致；截断预览、跌倒或有数值警告的运行不能用于正式报告。目前 `report` 和 `submit` **仅支持 `new_year`**；`doudoulong` 可播放、检查、录像及合成音轨。
-
-### 4. 生成新年提交材料
-
-在仓库根目录执行：
-
-```bash
 python -m jc04_dancing submit \
   --run-dir outputs/reproduced_audio \
-  --output submission \
-  --source-root .
+  --output submission --source-root .
 ```
 
-提交身份取自 [submission.yaml](src/jc04_dancing/configs/submission.yaml)。默认生成：
+设计说明包括小楚机器人介绍、仿真平台与机器人模型图片、运行流程。提交工具根据 [submission.yaml](src/jc04_dancing/configs/submission.yaml) 生成命名视频、PDF、独立流程图、源码 ZIP、运行记录和 SHA256 校验单；已有材料不覆盖。
 
-```text
-submission/
-├── ROBOT261937J_机器人舞蹈/
-│   ├── ROBOT261937J_机器人舞蹈_视频.mp4
-│   ├── ROBOT261937J_机器人舞蹈_文档.pdf
-│   ├── ROBOT261937J_机器人舞蹈_流程图.pdf
-│   ├── ROBOT261937J_机器人舞蹈_流程图.png
-│   ├── ROBOT261937J_机器人舞蹈_代码.zip
-│   ├── evidence/            # 运行记录与截图
-│   ├── manifest.json        # 文件清单
-│   └── SHA256SUMS           # SHA256 校验单
-└── ROBOT261937J_机器人舞蹈_提交材料.zip
-```
+## 调整编排与验证
 
-目录中另有报告元数据 JSON。提交命令会重新生成与该视频对应的报告，并按[源码文件清单](src/jc04_dancing/configs/source-files.txt)打包；已有提交包不会被覆盖。命令只生成本地文件，不会自动上传。
-
-若从仓库外运行，请明确指定源码与运行目录的绝对路径，例如：
+舞蹈数据为 `src/jc04_dancing/assets/motions/swan_lake.csv`。角度单位为度，左右轮速单位为 rad/s，时间单位为秒。生成器和音乐时间点随源码提供，修改后需重新检查、录制与合成，避免材料对应不同版本。
 
 ```bash
-python -m jc04_dancing submit \
-  --run-dir /path/to/JC04_dancing/outputs/reproduced_audio \
-  --output /path/to/submission \
-  --source-root /path/to/JC04_dancing
-```
-
-## 测试与进一步阅读
-
-```bash
+# 重新生成默认 CSV 与音乐段落时间表
+PYTHONPATH=src python tools/generate_swan_lake.py
+# 修改源码/数据后重新安装，再重新录制
+python -m pip install .
 python -m pip install '.[dev]'
 MUJOCO_GL=egl python -m pytest -q
 ```
 
-- [仿真与录像验证](docs/validation.md)：运行结果、关节限位及复现记录。
-- [舞蹈动作说明](docs/dance-analysis.md)：动作编排与代表姿态。
-- [模型转换与接触说明](docs/model-conversion.md)：模型来源、转换和物理近似。
-- [素材来源与许可声明](src/jc04_dancing/assets/licenses/ASSET-NOTICES.md)、[配乐说明](docs/audio-provenance.md)：各类素材的来源与使用范围。
+[验证记录](docs/validation.md) · [比赛要求对应](docs/competition-requirements.md) · [素材来源](src/jc04_dancing/assets/licenses/ASSET-NOTICES.md)
 
-两支舞蹈编排为本队原创。模型、字体等素材保留各自许可；模型的软件许可不自动覆盖音乐作品或录音，配乐权利与节拍同步情况见上述说明。本工程用于仿真展示，仿真结果不代表真机验证。
+本次动作由参数化编舞生成器重新编排；未包含原始控制工程。模型、音乐、字体保留各自来源和许可。仿真结果不代表真机验证。

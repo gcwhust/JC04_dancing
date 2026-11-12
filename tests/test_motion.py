@@ -54,9 +54,9 @@ def test_cubic_between_frames(tmp_path):
     assert clip.sample(0.25)['right_elbow_pitch'] == pytest.approx(math.radians(0.125))
 
 
-def test_frame_one_holds_first():
+def test_frame_one_holds_first(tmp_path):
     from jc04_dancing.motion import load_clip
-    clip = load_clip(resource_path('assets/motions/doudoulong_postprocess.csv'))
+    clip = load_clip(write_clip(tmp_path, frames=(1, 12, 24, 36)))
     assert clip.start == pytest.approx(1 / 24)
     assert clip.sample(0) == clip.sample(1 / 24)
 
@@ -93,15 +93,11 @@ def test_bad_fps(tmp_path, fps):
         load_clip(write_clip(tmp_path), fps=fps)
 
 
-@pytest.mark.parametrize(('filename', 'end'), [
-    ('happy_new_year.csv', 1880 / 24),
-    ('doudoulong_postprocess.csv', 1920 / 24),
-])
-def test_builtin_end_times_and_source_samples(filename, end):
+def test_legacy_end_times_and_source_samples(tmp_path):
     from jc04_dancing.motion import load_clip
-    path = resource_path('assets/motions/' + filename)
+    path = write_clip(tmp_path, frames=(0, 240, 960, 1920))
     clip = load_clip(path)
-    assert clip.duration == pytest.approx(end)
+    assert clip.duration == pytest.approx(80)
     # Source knots independently establish units, timing, and named mapping.
     with path.open(newline='') as stream:
         rows = list(csv.DictReader(stream))
@@ -121,10 +117,10 @@ def test_leg_phase(tmp_path):
         assert sample[name] - rest[name] == pytest.approx(math.radians(-1))
 
 
-def test_duration_new_year():
+def test_duration_includes_preparation_return_and_hold(tmp_path):
     from jc04_dancing.motion import load_clip
-    dance, _ = timeline(load_clip(resource_path('assets/motions/happy_new_year.csv')))
-    assert dance.total_duration == pytest.approx(1880 / 24 + 5)
+    dance, _ = timeline(load_clip(write_clip(tmp_path, frames=(0, 240, 960, 1920))))
+    assert dance.total_duration == pytest.approx(85)
 
 
 def test_transition_continuity(tmp_path):
@@ -160,3 +156,82 @@ def test_invalid_transitions(tmp_path, kwargs):
     from jc04_dancing.motion import load_clip
     with pytest.raises(ValueError):
         timeline(load_clip(write_clip(tmp_path)), **kwargs)
+
+
+def write_full_body_clip(tmp_path, *, omit=(), replace=None, times=(0, 1, 2, 3),
+                         right_wheel=(0, .4, .4, 0), left_wheel=(0, .2, .2, 0)):
+    columns = ['time_s', *ARMS, *LEGS, 'right_wheel_velocity_rad_s', 'left_wheel_velocity_rad_s']
+    columns = [name for name in columns if name not in omit]
+    path = tmp_path / 'full_body.csv'
+    with path.open('w', newline='') as stream:
+        writer = csv.DictWriter(stream, fieldnames=columns)
+        writer.writeheader()
+        for index, t in enumerate(times):
+            row = dict.fromkeys(ARMS, 0)
+            row.update(time_s=t, right_hip_pitch=40 + 4 * t, right_knee_pitch=100 + 4 * t,
+                       left_hip_pitch=40 + 4 * t, left_knee_pitch=100 + 4 * t,
+                       right_wheel_velocity_rad_s=right_wheel[index],
+                       left_wheel_velocity_rad_s=left_wheel[index])
+            if replace:
+                row.update(replace)
+            writer.writerow({name: row[name] for name in columns})
+    return path
+
+
+def test_explicit_leg_and_wheel_channels_keep_source_units_and_timing(tmp_path):
+    from jc04_dancing.motion import load_clip
+    clip = load_clip(write_full_body_clip(tmp_path), fps=123)
+    dance, _ = timeline(clip)
+    assert clip.duration == 3
+    assert set(clip.joint_names) == set(ARMS + LEGS)
+    assert dance.sample(3)['right_hip_pitch'] == pytest.approx(math.radians(44))
+    assert dance.sample(3)['left_knee_pitch'] == pytest.approx(math.radians(104))
+    assert dance.wheel_mode == 'driven'
+    assert dance.wheel_velocities(3) == pytest.approx({'right_wheel_joint': .4, 'left_wheel_joint': .2})
+    assert dance.wheel_velocities(-1) == {'right_wheel_joint': 0, 'left_wheel_joint': 0}
+    assert dance.wheel_velocities(8) == {'right_wheel_joint': 0, 'left_wheel_joint': 0}
+
+
+@pytest.mark.parametrize('omit', [('right_hip_pitch',), ('left_wheel_velocity_rad_s',)])
+def test_partial_full_body_channels_are_rejected(tmp_path, omit):
+    from jc04_dancing.motion import load_clip
+    with pytest.raises(ValueError, match='complete'):
+        load_clip(write_full_body_clip(tmp_path, omit=omit))
+
+
+@pytest.mark.parametrize('value', [float('nan'), float('inf'), 'invalid'])
+def test_nonfinite_wheel_channels_are_rejected(tmp_path, value):
+    from jc04_dancing.motion import load_clip
+    with pytest.raises(ValueError, match='finite'):
+        load_clip(write_full_body_clip(tmp_path, replace={'right_wheel_velocity_rad_s': value}))
+
+
+@pytest.mark.parametrize('side', ['right_wheel', 'left_wheel'])
+@pytest.mark.parametrize('endpoint', [0, -1])
+def test_full_body_wheels_must_stop_at_both_endpoints(tmp_path, side, endpoint):
+    from jc04_dancing.motion import load_clip
+    speeds = [0, .4, .4, 0]
+    speeds[endpoint] = .1
+    with pytest.raises(ValueError, match='zero wheel velocities at both endpoints'):
+        load_clip(write_full_body_clip(tmp_path, **{side: speeds}))
+
+
+@pytest.mark.parametrize('first_time', [-.1, .1])
+def test_full_body_time_must_start_at_zero(tmp_path, first_time):
+    from jc04_dancing.motion import load_clip
+    with pytest.raises(ValueError, match='start at zero'):
+        load_clip(write_full_body_clip(tmp_path, times=(first_time, 1, 2, 3)))
+
+
+def test_full_body_transitions_have_continuous_velocity_and_acceleration(tmp_path):
+    import numpy as np
+    from jc04_dancing.motion import load_clip
+    dance, _ = timeline(load_clip(write_full_body_clip(tmp_path)))
+    h = 1e-4
+    for boundary in (0, 2, 5, 7, 8):
+        values = np.array([list(dance.sample(boundary + offset * h).values()) for offset in (-2, -1, 0, 1, 2)])
+        left_velocity, right_velocity = (values[2] - values[1]) / h, (values[3] - values[2]) / h
+        left_acceleration = (values[2] - 2 * values[1] + values[0]) / h**2
+        right_acceleration = (values[4] - 2 * values[3] + values[2]) / h**2
+        assert left_velocity == pytest.approx(right_velocity, abs=1e-5)
+        assert left_acceleration == pytest.approx(right_acceleration, abs=3e-3)

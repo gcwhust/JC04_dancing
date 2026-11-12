@@ -4,13 +4,8 @@ model:
   root_joint: root
   support_equality: base_support
   # qpos0 already uses rest_deg; hinge refs preserve original URDF angles.
-  # Simulator-only playback envelope, verified against both original clips.
-  # Source URDF/XML ranges are retained. No claim about hardware range of motion.
-  joint_range_overrides:
-    right_shoulder_roll: [-0.18, 3.14]
-    left_shoulder_roll: [-0.18, 3.14]
-    right_elbow_pitch: [-1.5708, 2.10]
-    left_elbow_pitch: [-1.5708, 2.10]
+  # Swan Lake stays within the original source joint limits.
+  joint_range_overrides: {}
 joint_order:
   - right_shoulder_pitch
   - right_shoulder_roll
@@ -40,10 +35,17 @@ leg_pattern:
   left_phase_rad: 3.141592653589793
   right_phase_rad: 0.0
 wheels:
-  # User requirement: zero-speed wheel brakes, independent of the floating root.
+  # Legacy/debug default; authored full-body timelines select driven mode.
   mode: locked
   joints: [right_wheel_joint, left_wheel_joint]
   lock_equalities: [right_wheel_lock, left_wheel_lock]
+  velocity_gain: 4.0
+  max_torque: 4.0
+  max_speed_rad_s: 2.0
+  assist_damping: 0.001
+  # Effective barrel-roller resistance, not a measured tire coefficient.
+  # Passive main axles provide longitudinal rolling; low lateral drag permits yaw.
+  assist_friction: [0.03, 0.0001, 0.0001]
 # Initial simulator gains only; tune and validate with physical integration.
 actuators:
   right_shoulder_pitch: {kp: 40.0, kd: 2.0, max_torque: 30.0}
@@ -52,10 +54,10 @@ actuators:
   left_shoulder_pitch: {kp: 40.0, kd: 2.0, max_torque: 30.0}
   left_shoulder_roll: {kp: 40.0, kd: 2.0, max_torque: 30.0}
   left_elbow_pitch: {kp: 40.0, kd: 2.0, max_torque: 30.0}
-  right_hip_pitch: {kp: 160.0, kd: 8.0, max_torque: 80.0}
-  right_knee_pitch: {kp: 160.0, kd: 8.0, max_torque: 80.0}
-  left_hip_pitch: {kp: 160.0, kd: 8.0, max_torque: 80.0}
-  left_knee_pitch: {kp: 160.0, kd: 8.0, max_torque: 80.0}
+  right_hip_pitch: {kp: 320.0, kd: 12.0, max_torque: 80.0}
+  right_knee_pitch: {kp: 320.0, kd: 12.0, max_torque: 80.0}
+  left_hip_pitch: {kp: 320.0, kd: 12.0, max_torque: 80.0}
+  left_knee_pitch: {kp: 320.0, kd: 12.0, max_torque: 80.0}
 scene:
   # External velocity feedback must resolve the low-inertia arm dynamics.
   timestep: 0.0005

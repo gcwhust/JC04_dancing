@@ -9,17 +9,18 @@
     "converted_with": "MuJoCo 3.3.7"
   },
   "audio": {
-    "file": "audio/happy_new_year.mp3",
-    "status": "candidate_pending_audio_review",
-    "license": "not_inferred_from_model"
+    "file": "audio/swan_lake.mp3",
+    "source": "https://commons.wikimedia.org/wiki/File:Tchaikovsky_-_Swan_Lake_Op.20_-_Act_II_Pt.1.ogg",
+    "rights": "Public Domain Mark 1.0 per source listing",
+    "metadata": "audio/swan_lake_source.json"
   },
   "files": [
     {
-      "source": "JC04Dev/src/motion_control/motion_real/trajectory/happy_new_year.mp3",
-      "target": "audio/happy_new_year.mp3",
-      "source_sha256": "a6afc7649b5c4e2833368abccd7730829e6989e17fea50120ae8e51386619925",
-      "target_sha256": "a6afc7649b5c4e2833368abccd7730829e6989e17fea50120ae8e51386619925",
-      "transformation": "byte-for-byte copy"
+      "source": "https://upload.wikimedia.org/wikipedia/commons/8/82/Tchaikovsky_-_Swan_Lake_Op.20_-_Act_II_Pt.1.ogg",
+      "target": "audio/swan_lake.mp3",
+      "source_sha256": "b9ed92bf882a4ec7e13134d76741020fcb1caf7106da06c14629dc69b9f3c9bd",
+      "target_sha256": "6f3218f4029790511066d479334463f643adbfe0c6131c47912c5a05b784b77e",
+      "transformation": "Continuous original-speed excerpt55.2–149.2s; gain2; baked fades0.4/2.8s; MP3 transcode; see audio/swan_lake_source.json"
     },
     {
       "source": "JC04Dev/src/jc04_desc4/LICENSE",
@@ -29,25 +30,18 @@
       "transformation": "byte-for-byte copy"
     },
     {
-      "source": "JC04Dev/src/motion_control/LICENSE",
-      "target": "licenses/motion_control-LICENSE.txt",
-      "source_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
-      "target_sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
-      "transformation": "byte-for-byte copy"
+      "source": "src/jc04_dancing/choreography.py",
+      "target": "motions/swan_lake.csv",
+      "source_sha256": "2339ccaa81c3a68737bd0d38f1aa9d6dadd813598951a8d05a0eb4e1eccbb1f7",
+      "target_sha256": "ceb668d1d889ac6cd633665d7702cf130e0725a24e8fc8d21f9cd143dfabea74",
+      "transformation": "Deterministic original full-body Swan Lake choreography export; ten joint angles and two wheel velocities"
     },
     {
-      "source": "JC04Dev/src/motion_control/motion_real/trajectory/doudoulong_postprocess.csv",
-      "target": "motions/doudoulong_postprocess.csv",
-      "source_sha256": "f96b2a2af7751a8053b2a7bb56c2742ca2f039ed5c89369d656e7559d050888f",
-      "target_sha256": "f96b2a2af7751a8053b2a7bb56c2742ca2f039ed5c89369d656e7559d050888f",
-      "transformation": "byte-for-byte copy"
-    },
-    {
-      "source": "JC04Dev/src/motion_control/motion_real/trajectory/happy_new_year.csv",
-      "target": "motions/happy_new_year.csv",
-      "source_sha256": "2f63534ace314415b7804c960a27d338280753cfb82b4950fa4e878e587496f9",
-      "target_sha256": "2f63534ace314415b7804c960a27d338280753cfb82b4950fa4e878e587496f9",
-      "transformation": "byte-for-byte copy"
+      "source": "src/jc04_dancing/choreography.py",
+      "target": "motions/swan_lake.phrases.json",
+      "source_sha256": "2339ccaa81c3a68737bd0d38f1aa9d6dadd813598951a8d05a0eb4e1eccbb1f7",
+      "target_sha256": "5f1dc5be49767c89afd5c9c315c430fa45c3dda9acf8a5f4df3ee39127fe603c",
+      "transformation": "Deterministic original full-body Swan Lake choreography export; ten joint angles and two wheel velocities"
     },
     {
       "source": "JC04Dev/src/jc04_desc4/urdf/jc04.urdf",
@@ -270,7 +264,7 @@
       "source": "robot/jc04.urdf",
       "target": "robot/robot.xml",
       "source_sha256": "e1992e4ce21d9d1a8f642d5ee19c8bfdcb1f55289367eb03278dcf21e146f333",
-      "target_sha256": "c589434f212d7b582fe4697d1d82de7232ae04d983b45c09cc7237899886891b",
+      "target_sha256": "ff77498cde873a6ea332649b08db82be1008bb5d3ec99fcc710383a9dac03d58",
       "transformation": "MuJoCo 3.3.7 URDF import and MJCF export; scene and contacts: docs/model-conversion.md"
     }
   ]

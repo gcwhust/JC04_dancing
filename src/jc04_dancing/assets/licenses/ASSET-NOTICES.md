@@ -1,7 +1,9 @@
-# Extracted asset notices
+# Asset notices
 
-Model: JC04 description V1.3, jc04_desc4, source snapshot 2d224d13d624e07102a2c6eedbaf111694555e16. The source model package supplies Apache-2.0; its license is preserved here. Only mesh URI prefixes in the URDF were normalized; no model geometry or dance CSV was changed.
+Robot model: jc04_desc4 V1.3, reference snapshot 2d224d13d624e07102a2c6eedbaf111694555e16. The model package supplies Apache-2.0; see jc04_desc4-LICENSE.txt. Original controller source is excluded. The source URDF only has mesh URIs normalized. Derived MJCF adds the scene, simplified contacts, motors and two passive auxiliary wheel joints; see docs/model-conversion.md.
 
-Dance CSVs: preserved from motion_control; the source package license, when present, is copied separately. The user confirmed the two built-in dance choreographies are the team's original work and authorized public extraction of these assets. No author names or creation dates are inferred.
+Choreography: newly authored for this Swan Lake demonstration through the deterministic choreography.py generator. The CSV contains ten joint angle channels and two drive wheel velocity channels; phrase choices and generated poses are supplied with the data. It is not an unchanged extraction of a pre-existing motion file.
 
-Audio: happy_new_year.mp3 is a candidate copied from the local trajectory directory. Its selection, sync and redistribution status require the dedicated audio review. The model package license must not be interpreted as licensing this recording or composition. No audio rights holder or track metadata is invented.
+Music: Pyotr Ilyich Tchaikovsky, Swan Lake Op.20, Act II theme excerpt; European Archive / Musopen via Wikimedia Commons. The Commons recording page applies Public Domain Mark 1.0. Exact source, rights evidence, modifications and reproduction parameters are in assets/audio/swan_lake_source.json. The model license does not license the recording.
+
+Fonts: each bundled font retains its license and notice in assets/report/fonts.

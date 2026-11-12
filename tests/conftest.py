@@ -6,4 +6,4 @@ from jc04_dancing.simulation import Simulation, build_timeline
 
 @pytest.fixture(scope='session')
 def simulation():
-    return Simulation(build_timeline('new_year'), mode='free')
+    return Simulation(build_timeline('swan_lake'), mode='free')

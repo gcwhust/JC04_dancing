@@ -54,6 +54,13 @@ def convert(urdf, output):
         raise ValueError('Expected packaged JC04 base_joint -> robot_base')
     attachment.set('name', 'root')
     attachment.set('type', 'floating')
+    # The source describes the assist-wheel attachment as fixed. For physical
+    # rolling, split out each original wheel body on a passive axle; retain its
+    # source mass, inertia, mounting transform and mesh. Never edit the URDF.
+    for side in ('right', 'left'):
+        assist = source.find(f"joint[@name='{side}_assist']")
+        assist.set('type', 'continuous')
+        assist.find('axis').set('xyz', '0 1 0')
     for mesh in source.iter('mesh'):
         relative = Path(mesh.get('filename'))
         path = (urdf.parent / relative).resolve()
@@ -131,17 +138,23 @@ def convert(urdf, output):
                     joint.set('ref', str(angle))
     for side in ('right', 'left'):
         wheel = world.find(f".//body[@name='{side}_driving_wheel']")
-        knee = world.find(f".//body[@name='{side}_knee_pitch_Link']")
-        # Copy source primitive dimensions and the original fixed assist origin.
-        for kind, body, position in [('driving', wheel, '0 0 0'), ('assist', knee,
-                source.find(f"joint[@name='{side}_assist']/origin").get('xyz'))]:
+        assist = world.find(f".//body[@name='{side}_assist_wheel']")
+        assist.find('joint').set('damping', str(settings['wheels']['assist_damping']))
+        # Each contact is attached to its own rolling wheel body.
+        for kind, body, position in [('driving', wheel, '0 0 0'), ('assist', assist, '0 0 0')]:
             link = source.find(f"link[@name='{side}_{kind}_wheel']")
             cylinder = link.find('collision/geometry/cylinder')
-            ET.SubElement(body, 'geom', name=f'{side}_{kind}_contact', type='cylinder',
+            contact = ET.SubElement(body, 'geom', name=f'{side}_{kind}_contact', type='cylinder',
                           pos=position, quat=numbers([math.sqrt(0.5), math.sqrt(0.5), 0, 0]),
                           size=f"{cylinder.get('radius')} {float(cylinder.get('length')) / 2}",
                           contype='1', conaffinity='1', group='3', rgba='0.1 0.5 0.9 0.3',
                           friction=numbers(settings['scene']['friction']), condim='4')
+            if kind == 'assist':
+                # Source meshes show two rings of barrel rollers. This contact
+                # envelope approximates their low lateral resistance while the
+                # passive main axle supplies physical longitudinal rolling.
+                contact.set('friction', numbers(settings['wheels']['assist_friction']))
+                contact.set('priority', '1')
     # Small conservative primitives provide floor collision during falls. They
     # do not make a torso hull bridge the leg/wheel support or self-collide.
     base = world.find("body[@name='robot_base']")
@@ -166,6 +179,10 @@ def convert(urdf, output):
     motors = ET.SubElement(scene, 'actuator')
     for name, config in settings['actuators'].items():
         torque = config['max_torque']
+        ET.SubElement(motors, 'motor', name=name + '_motor', joint=name, gear='1',
+                      ctrllimited='true', ctrlrange=numbers([-torque, torque]))
+    for name in settings['wheels']['joints']:
+        torque = settings['wheels']['max_torque']
         ET.SubElement(motors, 'motor', name=name + '_motor', joint=name, gear='1',
                       ctrllimited='true', ctrlrange=numbers([-torque, torque]))
     # Find base height directly from all four finite cylinder support functions.

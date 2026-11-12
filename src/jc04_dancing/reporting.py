@@ -17,6 +17,7 @@ import tempfile
 
 import imageio_ffmpeg
 import numpy as np
+import yaml
 from PIL import Image as PILImage
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
@@ -28,6 +29,7 @@ from reportlab.platypus import (Image, PageBreak, Paragraph,
                                SimpleDocTemplate, Spacer)
 
 from .resources import resource_path
+from .simulation import build_timeline
 
 
 def _sha256(path: Path) -> str:
@@ -75,22 +77,30 @@ def _validated_run(run_dir: Path) -> tuple[dict, dict]:
             raise ValueError('Inconsistent simulation mode')
         if sim['fallen'] is not False or sim['warnings']:
             raise ValueError('Cannot report a successful dance with falls or simulation warnings')
-        if sim['dance_id'] != 'new_year':
-            raise ValueError('Only new_year has visually verified motion classes for this report')
-        if sim['wheel_mode'] != 'locked' or config['wheels']['mode'] != 'locked':
-            raise ValueError('Competition report requires the current locked wheel configuration')
+        if sim['dance_id'] != 'swan_lake':
+            raise ValueError('This report documents the current Swan Lake choreography')
+        dances = yaml.safe_load(resource_path('configs/dances.yaml').read_text(encoding='utf-8'))
+        dance = dances['dances']['swan_lake']
+        timeline = build_timeline('swan_lake')
+        if (sim['wheel_mode'] != 'driven' or dance['wheel_mode'] != 'driven' or
+                timeline.wheel_mode != 'driven' or not timeline.clip.full_body):
+            raise ValueError('Swan Lake requires coordinated body motion and driven wheels')
         if sim['timestep_s'] != .0005 or config['scene']['timestep'] != sim['timestep_s']:
             raise ValueError('Competition report requires the corrected 0.0005 s timestep')
         if data['camera']['physics_recentered'] is not False:
             raise ValueError('Report requires physical, non-recentered evidence')
         motion = evidence['motion']
-        if (motion['source'] != 'assets/motions/happy_new_year.csv' or
-                motion['source_fps'] != 24 or motion['original_bytes_unchanged'] is not True or
-                motion['interpolation'] != 'cubic'):
-            raise ValueError('Unverified original new_year motion evidence')
+        if (motion['source'] != dance['file'] or motion['source_fps'] != dance['fps'] or
+                motion['generated_choreography'] is not True or motion['interpolation'] != 'quintic' or
+                motion['wheel_units'] != 'rad/s' or motion['phrases_source'] != dance['phrases']):
+            raise ValueError('Unverified generated Swan Lake motion evidence')
         total = sum(motion[key] for key in ('clip_duration_s', 'prep_s', 'return_s', 'hold_s'))
-        if not 20 <= total <= 120 or motion['prep_s'] != 2 or motion['clip_duration_s'] != 1880 / 24:
-            raise ValueError('Unexpected new_year timing')
+        expected_timing = {'clip_start_s': timeline.clip.start, 'clip_duration_s': timeline.clip.duration,
+                           'prep_s': timeline.prep, 'return_s': timeline.return_time, 'hold_s': timeline.hold}
+        if (not 20 <= total <= 120 or
+                any(abs(motion[key] - value) > 1e-6 for key, value in expected_timing.items())):
+            raise ValueError('Unexpected Swan Lake timing')
+        sections = _choreography_sections(dance['phrases'], timeline.prep, timeline.clip.duration)
         if any(abs(total - duration) > 1e-6 for duration in
                (sim['timeline_duration_s'], sim['requested_time_s'], video['requested_duration_s'])):
             raise ValueError('Run/video timeline mismatch')
@@ -117,7 +127,7 @@ def _validated_run(run_dir: Path) -> tuple[dict, dict]:
             raise ValueError('Audio status disagrees with run audio presence')
         resources = evidence['resource_sha256']
         required = {'configs/robot.yaml', 'configs/dances.yaml', 'assets/provenance.json',
-                    'assets/robot/robot.xml', motion['source']}
+                    'assets/robot/robot.xml', motion['source'], dance['phrases']}
         if not required <= resources.keys():
             raise ValueError('Missing model/config/motion resource hashes')
         for name, expected in resources.items():
@@ -140,12 +150,12 @@ def _validated_run(run_dir: Path) -> tuple[dict, dict]:
         video_path = _evidence_path(run_dir, video['file'])
         if _sha256(video_path) != video['sha256']:
             raise ValueError('Video SHA256 differs from run.json')
-        required_labels = {'start', 'end', 'C01-side-open', 'C02-front-high', 'C03-left-flex', 'C03-right-flex'}
+        required_labels = {'start', 'end', *[section['id'] for section in sections]}
         if not required_labels <= {still['label'] for still in data['stills']}:
-            raise ValueError('Missing actual motion class stills')
-        expected_samples = {'start': 0, 'end': count - 1, 'C01-side-open': round(3 * fps),
-                            'C02-front-high': round(6.5 * fps), 'C03-left-flex': round(65 * fps),
-                            'C03-right-flex': round(66 * fps)}
+            raise ValueError('Missing actual choreography section stills')
+        expected_samples = {'start': 0, 'end': count - 1}
+        expected_samples.update({section['id']: round(sum(section['timeline_time_s']) / 2 * fps)
+                                 for section in sections})
         labels = [still['label'] for still in data['stills']]
         if len(labels) != len(set(labels)):
             raise ValueError('Duplicate still labels in recording evidence')
@@ -265,13 +275,26 @@ def render_flowchart(output_pdf: Path, output_png: Path) -> None:
             plt.close(fig)
 
 
-def _classes(prep: float) -> list[dict]:
-    entries = [('C01', '双臂侧向展开/合拢', (0, 60), (0, 2.5), '双肩 roll 与双肘协调；侧向展开后屈肘合拢'),
-               ('C02', '双臂前举并伸肘', (60, 120), (2.5, 5), '双肩 pitch 由 0 至 150 度，双肘由约 99 至 0 度'),
-               ('C03', '交替屈伸肘', (1488, 1680), (62, 70), '肩部基本保持，左右肘在约 0–90 度之间交替')]
-    return [dict(id=id_, name=name, source_frames=list(frames), source_time_s=list(times),
-                 timeline_time_s=[t + prep for t in times], description=description)
-            for id_, name, frames, times, description in entries]
+def _choreography_sections(source: str, prep: float, duration: float) -> list[dict]:
+    """Read the generated score's actual sections, without inventing motion classes."""
+    phrases = json.loads(resource_path(source).read_text(encoding='utf-8'))
+    _finite_tree(phrases)
+    if (phrases['schema_version'] != 1 or phrases['dance_id'] != 'swan_lake' or
+            abs(phrases['duration_s'] - duration) > 1e-6 or phrases['wheel_mode'] != 'driven'):
+        raise ValueError('Choreography phrase map differs from the recorded dance')
+    result, labels, endpoint = [], set(), 0.0
+    for section in phrases['sections']:
+        start, end = section['start_s'], section['end_s']
+        if (section['id'] in labels or not section['id'] or not section['name'] or
+                abs(start - endpoint) > 1e-6 or not start < end <= duration):
+            raise ValueError('Choreography sections must cover the complete dance in order')
+        labels.add(section['id'])
+        endpoint = end
+        result.append({'id': section['id'], 'name': section['name'], 'body_time_s': [start, end],
+                       'timeline_time_s': [prep + start, prep + end], 'description': section['description']})
+    if not result or abs(endpoint - duration) > 1e-6:
+        raise ValueError('Choreography sections do not reach the dance endpoint')
+    return result
 
 
 def _write_report(data: dict, run_dir: Path, target: Path, team_id: str, flowchart: Path) -> list[dict]:
@@ -299,7 +322,7 @@ def _write_report(data: dict, run_dir: Path, target: Path, team_id: str, flowcha
     image_height = image_width * ratio
     values = {
         'platform': f"仿真平台采用 MuJoCo {data['versions']['mujoco']}，用于计算关节运动、重力及地面接触，并生成三维画面。",
-        'model': '机器人模型采用 jc04_desc4 V1.3，由 URDF 转换为 MuJoCo 使用的 MJCF，保留机器人外观与关节结构。舞蹈仿真驱动双臂及髋膝关节，主动轮保持锁定。',
+        'model': '机器人模型采用 jc04_desc4 V1.3，由 URDF 转换为 MuJoCo 使用的 MJCF，保留机器人外观与关节结构。舞蹈协调双臂、髋膝与双轮共 12 个主动自由度，完成展翼、屈伸、滑行与转向。',
         'model_image': Image(str(image_path), width=image_width, height=image_height),
         'model_caption': paragraph('图 1　小楚机器人仿真模型', caption),
         'flowchart': Image(str(flowchart), width=usable_width, height=usable_width * 7.0 / 7.2),
@@ -339,7 +362,7 @@ def build_report(run_dir: Path, output: Path, team_id: str = 'ROBOT261937J') -> 
 
     Outputs are always separate from immutable evidence. Missing evidence, failed
     recordings, previews, changed assets/video or altered stills are rejected.
-    Only the verified new_year choreography is currently documented.
+    The current generated Swan Lake score supplies its own section timings.
     """
     run_dir, output = Path(run_dir).resolve(), Path(output).resolve()
     if output.suffix.lower() != '.pdf' or output.name == 'flowchart.pdf':
@@ -361,10 +384,12 @@ def build_report(run_dir: Path, output: Path, team_id: str = 'ROBOT261937J') -> 
                        'video_sha256': data['video']['sha256']},
             'audio': data['audio'], 'video': data['video'], 'simulation': data['simulation'],
             'config': data['config'], 'versions': data['versions'], 'evidence': data['evidence'],
-            'motion_classes': _classes(data['evidence']['motion']['prep_s']),
+            'choreography_sections': _choreography_sections(
+                data['evidence']['motion']['phrases_source'], data['evidence']['motion']['prep_s'],
+                data['evidence']['motion']['clip_duration_s']),
             'images': images, 'checks': checks,
             'limitations': ['D04 music synchronization has not been subjectively verified',
-                            'simplified contacts; no body self-collision; ideal soft wheel brakes',
+                            'simplified contacts; no body self-collision; idealized wheel velocity motors',
                             'runtime joint ranges do not validate hardware ROM', 'separate scoring rules not provided'],
             'artifacts': {key: {'file': name, 'sha256': _sha256(staging / name)} for key, name in
                           [('report_pdf', output.name), ('flowchart_pdf', 'flowchart.pdf'), ('flowchart_png', 'flowchart.png')]},

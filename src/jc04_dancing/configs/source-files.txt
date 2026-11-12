@@ -4,15 +4,8 @@ README.md
 docs/audio-provenance.md
 docs/competition-requirements.md
 docs/control-diagnosis.md
-docs/control-timestep-diagnosis.png
 docs/dance-analysis.md
-docs/dance-c01-close.png
-docs/dance-c01-open.png
-docs/dance-c02-high.png
-docs/dance-c03-left.png
-docs/dance-c03-right.png
-docs/media/dance-preview.gif
-docs/media/doudoulong-preview.gif
+docs/media/swan-lake-preview.gif
 docs/model-conversion.md
 docs/model-initial.png
 docs/validation.md
@@ -21,12 +14,12 @@ pyproject.toml
 requirements-lock.txt
 src/jc04_dancing/__init__.py
 src/jc04_dancing/__main__.py
-src/jc04_dancing/assets/audio/happy_new_year.mp3
+src/jc04_dancing/assets/audio/swan_lake.mp3
+src/jc04_dancing/assets/audio/swan_lake_source.json
 src/jc04_dancing/assets/licenses/ASSET-NOTICES.md
 src/jc04_dancing/assets/licenses/jc04_desc4-LICENSE.txt
-src/jc04_dancing/assets/licenses/motion_control-LICENSE.txt
-src/jc04_dancing/assets/motions/doudoulong_postprocess.csv
-src/jc04_dancing/assets/motions/happy_new_year.csv
+src/jc04_dancing/assets/motions/swan_lake.csv
+src/jc04_dancing/assets/motions/swan_lake.phrases.json
 src/jc04_dancing/assets/provenance.json
 src/jc04_dancing/assets/report/fonts/DejaVu-LICENSE.txt
 src/jc04_dancing/assets/report/fonts/DejaVuSans.ttf
@@ -67,6 +60,7 @@ src/jc04_dancing/assets/robot/meshes/robot_base.msh
 src/jc04_dancing/assets/robot/meshes/robot_base_casing_Link.STL
 src/jc04_dancing/assets/robot/robot.xml
 src/jc04_dancing/audio.py
+src/jc04_dancing/choreography.py
 src/jc04_dancing/cli.py
 src/jc04_dancing/configs/dances.yaml
 src/jc04_dancing/configs/robot.yaml
@@ -81,6 +75,7 @@ src/jc04_dancing/submission.py
 tests/conftest.py
 tests/test_assets.py
 tests/test_audio.py
+tests/test_choreography.py
 tests/test_model.py
 tests/test_motion.py
 tests/test_recording.py
@@ -89,3 +84,4 @@ tests/test_simulation.py
 tests/test_submission.py
 tools/convert_model.py
 tools/extract_assets.py
+tools/generate_swan_lake.py

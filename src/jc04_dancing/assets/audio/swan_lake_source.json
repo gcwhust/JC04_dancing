@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "asset": "assets/audio/swan_lake.mp3",
+  "work": {
+    "title": "Swan Lake, Op.20 — Act II Pt.1 (theme excerpt)",
+    "composer": "Pyotr Ilyich Tchaikovsky",
+    "composer_dates": "1840–1893",
+    "source_credit": "European Archive, via Musopen and Wikimedia Commons",
+    "performer_identity": "The source lists European Archive; individual orchestra, conductor, and recording date are not identified."
+  },
+  "source": {
+    "description_url": "https://commons.wikimedia.org/wiki/File:Tchaikovsky_-_Swan_Lake_Op.20_-_Act_II_Pt.1.ogg",
+    "description_revision_url": "https://commons.wikimedia.org/w/index.php?title=File:Tchaikovsky_-_Swan_Lake_Op.20_-_Act_II_Pt.1.ogg&oldid=1013138580",
+    "download_url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Tchaikovsky_-_Swan_Lake_Op.20_-_Act_II_Pt.1.ogg",
+    "upstream_url": "https://musopen.org/music/42995-swan-lake-op-20/",
+    "legacy_upstream_url": "https://musopen.org/music/1500/pyotr-ilyich-tchaikovsky/swan-lake-op20/",
+    "retrieved_date": "2026-11-12",
+    "sha256": "b9ed92bf882a4ec7e13134d76741020fcb1caf7106da06c14629dc69b9f3c9bd",
+    "bytes": 3468395,
+    "format": "Ogg Vorbis,44100Hz,stereo",
+    "decoded_duration_s": 250.07891156462586
+  },
+  "rights": {
+    "designation": "Public Domain Mark1.0",
+    "url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "evidence_url": "https://commons.wikimedia.org/w/index.php?title=File:Tchaikovsky_-_Swan_Lake_Op.20_-_Act_II_Pt.1.ogg&oldid=1013138580",
+    "basis": "The Commons file page identifies the recording as sourced from Musopen, credits European Archive, and applies the Creative Commons Public Domain Mark. This is the source listing, not a new project license grant.",
+    "verification_scope": "Primary Commons file description and Creative Commons PDM deed checked; legacy Musopen URL is404, current work page resolves. Individual recording provenance is not supplied by the source.",
+    "attribution": "Pyotr Ilyich Tchaikovsky, Swan Lake Op.20 — European Archive / Musopen, via Wikimedia Commons (Public Domain Mark1.0). Excerpt, gain, fades and MP3 transcode by JC04_dancing."
+  },
+  "excerpt": {
+    "source_start_s": 55.2,
+    "source_end_s": 149.2,
+    "duration_s": 94.0,
+    "playback_rate": 1.0,
+    "looped": false,
+    "reordered": false,
+    "gain_linear": 2.0,
+    "gain_db": 6.020599913279624,
+    "fade_in_s": 0.4,
+    "fade_out_start_s": 91.2,
+    "fade_out_s": 2.8,
+    "fade_curve": "linear",
+    "fades_baked_into_asset": true,
+    "recommended_add_audio_fade_in_s": 0.0,
+    "recommended_add_audio_fade_out_s": 0.0,
+    "selection_rationale": "One continuous original-speed excerpt contains the repeated Swan Lake theme, a quieter response, a dynamic build, a climax, and a fading response. Boundaries were selected from waveform and spectrogram structure."
+  },
+  "output": {
+    "sha256": "6f3218f4029790511066d479334463f643adbfe0c6131c47912c5a05b784b77e",
+    "bytes": 2257591,
+    "codec": "MP3 (libmp3lame)",
+    "bitrate_bps": 192000,
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "decoded_sample_frames": 4512000,
+    "decoded_duration_s": 94.0,
+    "decoded_peak": 0.7782827615737915,
+    "decoded_rms": 0.09371495246887207
+  },
+  "reproduction": {
+    "source_local_filename": "source.ogg",
+    "ffmpeg_version": "ffmpeg version 7.0.2-static https://johnvansickle.com/ffmpeg/  Copyright (c) 2000-2024 the FFmpeg developers",
+    "ffmpeg_arguments": [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-y",
+      "-i",
+      "source.ogg",
+      "-af",
+      "atrim=start=55.2:end=149.2,asetpts=PTS-STARTPTS,volume=2.0,afade=t=in:st=0:d=0.4,afade=t=out:st=91.2:d=2.8",
+      "-ar",
+      "48000",
+      "-ac",
+      "2",
+      "-c:a",
+      "libmp3lame",
+      "-b:a",
+      "192k",
+      "-map_metadata",
+      "-1",
+      "-metadata",
+      "title=Swan Lake, Op.20 - Act II theme excerpt",
+      "-metadata",
+      "composer=Pyotr Ilyich Tchaikovsky",
+      "-metadata",
+      "artist=European Archive (via Musopen / Wikimedia Commons)",
+      "-metadata",
+      "copyright=Public Domain Mark 1.0, per source listing",
+      "swan_lake.mp3"
+    ],
+    "note": "Download source URL and verify sourceSHA256. Substitute an FFmpeg executable supporting libmp3lame. Filter timestamps refer to the original recording."
+  },
+  "choreography_timing": {
+    "time_origin": "excerpt start; add the video preparation offset to obtain video time",
+    "method": "Manual selection from0.12-second RMS envelopes and4096-sample STFT spectrograms at22050Hz. Anchors are approximate structural cues, not score-derived barlines or independently verified beats.",
+    "subjective_audition_performed": false,
+    "beat_alignment_verified": false,
+    "phrase_anchors": [
+      {
+        "excerpt_time_s": 0.0,
+        "source_time_s": 55.2,
+        "label": "theme_reprise",
+        "rationale": "Start of the strong repeated theme; first sustained harmonic band at approximately source 55.2s."
+      },
+      {
+        "excerpt_time_s": 6.9,
+        "source_time_s": 62.1,
+        "label": "theme_answer_1",
+        "rationale": "Chosen near the next repeated dynamic pulse around source 62.1s."
+      },
+      {
+        "excerpt_time_s": 13.8,
+        "source_time_s": 69.0,
+        "label": "theme_answer_2",
+        "rationale": "Chosen near the matching repeated pulse around source 69.0s."
+      },
+      {
+        "excerpt_time_s": 20.8,
+        "source_time_s": 76.0,
+        "label": "theme_answer_3",
+        "rationale": "Chosen near the closing repeated pulse around source 76.0s."
+      },
+      {
+        "excerpt_time_s": 24.8,
+        "source_time_s": 80.0,
+        "label": "quiet_response",
+        "rationale": "Envelope drops into a lower-energy responding passage near source 80s."
+      },
+      {
+        "excerpt_time_s": 34.1,
+        "source_time_s": 89.3,
+        "label": "response_turn",
+        "rationale": "Renewed harmonic/energy motion around source 89.3s."
+      },
+      {
+        "excerpt_time_s": 44.3,
+        "source_time_s": 99.5,
+        "label": "build",
+        "rationale": "Sustained rise begins around source 99.5s."
+      },
+      {
+        "excerpt_time_s": 54.4,
+        "source_time_s": 109.6,
+        "label": "expansion",
+        "rationale": "Higher spectral density and a further dynamic rise around source 109.6s."
+      },
+      {
+        "excerpt_time_s": 65.9,
+        "source_time_s": 121.1,
+        "label": "climax_peak",
+        "rationale": "Largest 0.12s RMS window in this excerpt occurs at source 121.08s, approximately excerpt 65.9s."
+      },
+      {
+        "excerpt_time_s": 67.4,
+        "source_time_s": 122.6,
+        "label": "release",
+        "rationale": "Sharp amplitude reduction after the climax at approximately source 122.6s."
+      },
+      {
+        "excerpt_time_s": 73.8,
+        "source_time_s": 129.0,
+        "label": "final_response",
+        "rationale": "Late response pulse centered around source 129s."
+      },
+      {
+        "excerpt_time_s": 86.8,
+        "source_time_s": 142.0,
+        "label": "reverence",
+        "rationale": "Marked decrescendo and thinning of the spectrum around source 142s."
+      },
+      {
+        "excerpt_time_s": 91.2,
+        "source_time_s": 146.4,
+        "label": "fade_out",
+        "rationale": "Start of the applied 2.8s output fade."
+      },
+      {
+        "excerpt_time_s": 94.0,
+        "source_time_s": 149.2,
+        "label": "end",
+        "rationale": "Exact decoded excerpt endpoint."
+      }
+    ]
+  }
+}

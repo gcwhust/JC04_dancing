@@ -46,14 +46,23 @@ def _evidence(sim) -> dict:
     if dance:
         paths.append(dance['file'])
     clip = sim.timeline.clip
+    phrases_path = dance.get('phrases') if dance else None
+    if phrases_path:
+        paths.append(phrases_path)
+    for name in ('assets/audio/swan_lake.mp3', 'assets/audio/swan_lake_source.json'):
+        if getattr(clip, 'full_body', False):
+            paths.append(name)
     provenance = json.loads(resource_path('assets/provenance.json').read_text())
     original_motion_hash = next((item['source_sha256'] for item in provenance['files'] if dance and item['target'] == dance['file'].removeprefix('assets/')), None)
     return {
-        'code_sha256': {name: _sha256(Path(__file__).parent / name) for name in ('recording.py', 'simulation.py', 'motion.py', 'cli.py')},
+        'code_sha256': {name: _sha256(Path(__file__).parent / name) for name in ('recording.py', 'simulation.py', 'motion.py', 'cli.py', 'choreography.py')},
         'resource_sha256': {name: _sha256(resource_path(name)) for name in paths},
         'motion': {'source': dance['file'] if dance else None, 'source_fps': dance['fps'] if dance else None,
                    'original_bytes_unchanged': bool(dance and _sha256(resource_path(dance['file'])) == original_motion_hash), 'clip_start_s': clip.start,
-                   'clip_duration_s': clip.duration, 'interpolation': 'cubic',
+                   'clip_duration_s': clip.duration, 'interpolation': clip.interpolation,
+                   'generated_choreography': getattr(clip, 'full_body', False),
+                   'wheel_units': 'rad/s' if getattr(clip, 'full_body', False) else None,
+                   'phrases_source': phrases_path,
                    'prep_s': sim.timeline.prep, 'return_s': sim.timeline.return_time,
                    'hold_s': sim.timeline.hold},
     }
@@ -191,7 +200,7 @@ def record(sim, output: Path, width=1920, height=1080, fps=30, duration: float |
             renderer = mujoco.Renderer(sim.model, height=height, width=width)
         except Exception as exc:
             raise RuntimeError('Offscreen renderer failed. Retry in a NEW process: '
-                               'MUJOCO_GL=egl jc04-dancing record --dance new_year --output outputs/retry/dance.mp4 '
+                               'MUJOCO_GL=egl jc04-dancing record --dance swan_lake --output outputs/retry/dance.mp4 '
                                '(requires libEGL + Mesa/vendor OpenGL); alternatively MUJOCO_GL=osmesa '
                                'with libOSMesa. Original error: ' + str(exc)) from exc
         camera = mujoco.MjvCamera()
@@ -212,12 +221,15 @@ def record(sim, output: Path, width=1920, height=1080, fps=30, duration: float |
         samples = {}
         for label, index in [('start', 0), ('mid', frame_count // 2), ('end', frame_count - 1)]:
             samples.setdefault(index, []).append(label)
-        # Real action types identified in docs/dance-analysis.md, full timeline times.
-        if getattr(sim.timeline, 'dance_id', None) == 'new_year':
-            for label, t in [('C01-side-open', 3), ('C02-front-high', 6.5), ('C03-left-flex', 65), ('C03-right-flex', 66)]:
+        # Midpoints of the authored sections, always actual decoded frames.
+        phrases_path = result['evidence']['motion'].get('phrases_source')
+        if phrases_path:
+            phrases = json.loads(resource_path(phrases_path).read_text())
+            for section in phrases['sections']:
+                t = sim.timeline.prep + (section['start_s'] + section['end_s']) / 2
                 index = round(t * fps)
                 if index < frame_count:
-                    samples.setdefault(index, []).append(label)
+                    samples.setdefault(index, []).append(section['id'])
         frame_states = {}
         for k in range(frame_count):
             sim.advance_to(k / fps)
@@ -227,6 +239,8 @@ def record(sim, output: Path, width=1920, height=1080, fps=30, duration: float |
                 frame_states[k] = {'simulation_time_s': float(sim.data.time),
                                    'physical_base_position_m': sim.data.qpos[root:root + 3].tolist(),
                                    'camera_lookat_m': camera.lookat.tolist(),
+                                   'actual_wheel_angle_rad': {name: float(sim.data.qpos[sim.model.joint(name).qposadr[0]]) for name in sim.config['wheels']['joints']},
+                                   'actual_wheel_velocity_rad_s': {name: float(sim.data.qvel[sim.model.joint(name).dofadr[0]]) for name in sim.config['wheels']['joints']},
                                    'actual_driven_joint_rad': {name: float(sim.data.qpos[sim.model.joint(name).qposadr[0]]) for name in sim.names}}
             renderer.update_scene(sim.data, camera=camera)
             try:

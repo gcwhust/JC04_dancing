@@ -35,11 +35,93 @@ def test_reset_contact(simulation):
     assert simulation.data.qpos[2] == pytest.approx(.535930035158)
 
 
-def test_wheels_have_no_active_motors(simulation):
-    wheel_ids = {simulation.model.joint(side + '_wheel_joint').id for side in ('right', 'left')}
-    assert not wheel_ids.intersection(simulation.model.actuator_trnid[:, 0])
-    simulation.advance_to(.1)
-    assert simulation.model.nu == 10
+def test_driven_wheels_roll_floating_robot_with_bounded_torque(simulation):
+    # A motor mapping error, retained brake, or fused assist wheel stops this glide.
+    original = simulation.timeline
+
+    class Glide:
+        total_duration = 4.0
+        wheel_mode = 'driven'
+
+        def sample(self, t):
+            return dict(original.rest)
+
+        def wheel_velocities(self, t):
+            speed = .6 * min(1.0, t / 2)
+            return {'right_wheel_joint': speed, 'left_wheel_joint': speed}
+
+    try:
+        simulation.timeline = Glide()
+        simulation.wheel_mode = 'driven'
+        simulation.mode = 'free'
+        simulation.reset()
+        simulation.advance_to(4)
+        stats = simulation.summary()
+        assert simulation.model.nu == 12
+        assert stats['final_base_position_m'][0] > .09
+        assert stats['max_base_tilt_deg'] < 8
+        assert not stats['fallen'] and stats['warnings'] == {}
+        assert stats['max_wheel_torque_nm'] <= simulation.config['wheels']['max_torque']
+        assert stats['max_wheel_rotation_rad'] > .8
+        for side in ('right', 'left'):
+            assert not simulation.data.eq_active[simulation.model.equality(side + '_wheel_lock').id]
+            assist = simulation.model.joint(side + '_assist')
+            assert abs(simulation.data.qpos[assist.qposadr[0]]) > .8
+    finally:
+        simulation.timeline = original
+
+
+def test_differential_wheels_physically_turn_the_floating_base(simulation):
+    # Fused/high-friction assist contacts previously swallowed differential
+    # commands: the wheels turned but the chassis yawed less than one degree.
+    original = simulation.timeline
+
+    class Arc:
+        total_duration = 8.0
+
+        def sample(self, t):
+            return dict(original.rest)
+
+        def wheel_velocities(self, t):
+            ramp = .5 - .5 * math.cos(math.pi * min(t / 2, 1))
+            return {'right_wheel_joint': .7 * ramp, 'left_wheel_joint': .3 * ramp}
+
+    try:
+        simulation.timeline = Arc()
+        simulation.wheel_mode = 'driven'
+        simulation.mode = 'free'
+        simulation.reset()
+        simulation.advance_to(8)
+        w, x, y, z = simulation.data.qpos[3:7]
+        yaw = math.degrees(math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z)))
+        assert 10 < yaw < 65
+        assert simulation.summary()['base_yaw_excursion_deg'] == pytest.approx(yaw, abs=.1)
+        assert simulation.summary()['max_base_tilt_deg'] < 5
+        assert not simulation.summary()['fallen']
+        assert not simulation.data.eq_active[simulation.model.equality('base_support').id]
+    finally:
+        simulation.timeline = original
+
+
+def test_driven_wheel_commands_must_be_finite_and_complete(simulation):
+    original = simulation.timeline
+
+    class InvalidWheelCommand:
+        def sample(self, t):
+            return original.sample(t)
+
+        def wheel_velocities(self, t):
+            return {'right_wheel_joint': float('nan'), 'left_wheel_joint': 0.0}
+
+    try:
+        simulation.timeline = InvalidWheelCommand()
+        simulation.wheel_mode = 'driven'
+        simulation.reset()
+        with pytest.raises(ValueError, match='wheel.*finite'):
+            simulation.advance_to(.001)
+        assert simulation.data.time == 0
+    finally:
+        simulation.timeline = original
 
 
 def test_wheels_locked_during_moving_dance_with_floating_base(simulation):
@@ -94,16 +176,30 @@ def test_limit_error(simulation):
         validate_targets(simulation.model, BadTimeline(), .002)
 
 
-def test_explicit_playback_ranges_preserve_original_targets(simulation):
-    # The source URDF disallows real poses present in the unmodified CSVs.
-    ranges = simulation.summary()['joint_range_overrides']
+def test_swan_lake_preserves_source_joint_limits(simulation):
+    # New choreography must fit the source limits without widening the model.
+    assert simulation.summary()['joint_range_overrides'] == {}
     for side in ('right', 'left'):
-        roll = ranges[side + '_shoulder_roll']
-        assert roll['source_rad'] == [0, 3.14]
-        assert simulation.model.joint(side + '_shoulder_roll').range[0] <= math.radians(-10)
-        elbow = ranges[side + '_elbow_pitch']
-        assert elbow['source_rad'] == [-1.5708, 1.85]
-        assert simulation.model.joint(side + '_elbow_pitch').range[1] >= math.radians(120)
+        np.testing.assert_array_equal(simulation.model.joint(side + '_shoulder_roll').range, [0, 3.14])
+        np.testing.assert_array_equal(simulation.model.joint(side + '_elbow_pitch').range, [-1.5708, 1.85])
+    validate_targets(simulation.model, simulation.timeline, .01)
+
+
+@pytest.mark.parametrize(('value', 'allowed'), [(-5e-8, True), (-5e-5, False)])
+def test_target_validation_distinguishes_spline_roundoff_from_limit_violation(value, allowed):
+    model = mujoco.MjModel.from_xml_string('<mujoco><compiler angle="radian"/><worldbody><body><joint name="right_shoulder_roll" range="0 3.14"/><geom type="sphere" size=".1"/></body></worldbody></mujoco>')
+
+    class TinyTrajectory:
+        total_duration = .001
+
+        def sample(self, t):
+            return {'right_shoulder_roll': value}
+
+    if allowed:
+        validate_targets(model, TinyTrajectory(), .0005)
+    else:
+        with pytest.raises(ValueError, match='outside range'):
+            validate_targets(model, TinyTrajectory(), .0005)
 
 
 def test_nonfinite_target_error(simulation):
@@ -138,7 +234,8 @@ def test_bounded_torque_and_real_tracking(simulation):
     for name, settings in simulation.config['actuators'].items():
         assert abs(simulation.data.ctrl[simulation.model.actuator(name + '_motor').id]) <= settings['max_torque']
     shoulder = simulation.model.joint('right_shoulder_roll')
-    assert simulation.data.qpos[shoulder.qposadr[0]] > math.radians(100)
+    target = simulation.timeline.sample(simulation.data.time)['right_shoulder_roll']
+    assert simulation.data.qpos[shoulder.qposadr[0]] == pytest.approx(target, abs=.12)
     stats = simulation.summary()
     assert stats['steps'] > 0 and stats['warnings'] == {}
     assert stats['max_abs_torque_nm'] <= 80
@@ -177,7 +274,7 @@ def test_numerical_warning_is_failure(simulation):
         simulation.advance_to(.002)
 
 
-@pytest.mark.parametrize(('dance_id', 'duration'), [('new_year', 1880 / 24 + 5), ('doudoulong', 85)])
+@pytest.mark.parametrize(('dance_id', 'duration'), [('swan_lake', 99)])
 def test_timeline_units_and_selection(dance_id, duration):
     timeline = build_timeline(dance_id)
     assert timeline.dance_id == dance_id
@@ -191,13 +288,13 @@ def test_cli_list_without_display(capsys, monkeypatch):
     monkeypatch.delenv('DISPLAY', raising=False)
     assert main(['list']) == 0
     result = capsys.readouterr().out
-    assert {line.split('\t')[0] for line in result.splitlines()} == {'new_year', 'doudoulong'}
+    assert {line.split('\t')[0] for line in result.splitlines()} == {'swan_lake'}
 
 
 def test_cli_check_summary(capsys):
-    assert main(['check', '--dance', 'doudoulong', '--mode', 'supported', '--duration', '.01']) == 0
+    assert main(['check', '--dance', 'swan_lake', '--mode', 'supported', '--duration', '.01']) == 0
     result = json.loads(capsys.readouterr().out)
     assert result['mode'] == 'supported'
-    assert result['dance_id'] == 'doudoulong'
+    assert result['dance_id'] == 'swan_lake'
     assert .01 <= result['simulation_time_s'] < .012 + 1e-9
     assert result['warnings'] == {}

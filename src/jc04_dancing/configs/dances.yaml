@@ -1,16 +1,14 @@
 dances:
-  new_year:
-    name: 新年
-    file: assets/motions/happy_new_year.csv
-    fps: 24.0
+  swan_lake:
+    name: 天鹅湖
+    file: assets/motions/swan_lake.csv
+    phrases: assets/motions/swan_lake.phrases.json
+    fps: 30.0
+    wheel_mode: driven
     audio:
-      file: assets/audio/happy_new_year.mp3
-      enabled: false
-      status: deferred_user_postproduction
-  doudoulong:
-    name: 豆豆龙
-    file: assets/motions/doudoulong_postprocess.csv
-    fps: 24.0
+      file: assets/audio/swan_lake.mp3
+      enabled: true
+      status: bundled_public_domain_recording_excerpt
 transition:
   prep: 2.0
   return: 2.0

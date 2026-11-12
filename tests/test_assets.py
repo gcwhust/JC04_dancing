@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
-MOTIONS = ('happy_new_year.csv', 'doudoulong_postprocess.csv')
+MOTIONS = ('swan_lake.csv',)
 
 
 def test_resources_outside_cwd(tmp_path, monkeypatch):
@@ -46,7 +46,7 @@ def test_manifest_hashes():
     manifest = json.loads((assets / 'provenance.json').read_text())
     assert manifest['source_snapshot'] == '2d224d13d624e07102a2c6eedbaf111694555e16'
     files = manifest['files']
-    assert {entry['target'] for entry in files if entry['target'].startswith('motions/')} == {'motions/' + n for n in MOTIONS}
+    assert {entry['target'] for entry in files if entry['target'].startswith('motions/') and entry['target'].endswith('.csv')} == {'motions/' + n for n in MOTIONS}
     for entry in files:
         assert len(entry['source_sha256']) == 64
         actual = hashlib.sha256((assets / entry['target']).read_bytes()).hexdigest()
@@ -85,7 +85,7 @@ def test_extraction_is_reproducible_and_whitelisted(tmp_path):
     for name in MOTIONS:
         (trajectory / name).write_text('frame,right_elbow_pitch\n0,0\n')
     (trajectory / 'unselected.csv').write_text('frame,right_elbow_pitch\n0,0\n')
-    (trajectory / 'happy_new_year.mp3').write_bytes(b'audio fixture')
+    (trajectory / 'unselected.mp3').write_bytes(b'audio fixture')
     (trajectory / 'credentials.yaml').write_text('must not copy')
     script = Path(__file__).resolve().parents[1] / 'tools/extract_assets.py'
     destination = tmp_path / 'assets'
@@ -94,7 +94,9 @@ def test_extraction_is_reproducible_and_whitelisted(tmp_path):
     first = (destination / 'provenance.json').read_bytes()
     subprocess.run([sys.executable, str(script), '--source', str(source), '--destination', str(destination)], check=True)
     assert (destination / 'provenance.json').read_bytes() == first
-    assert {path.name for path in (destination / 'motions').glob('*.csv')} == set(MOTIONS)
+    assert not (destination / 'motions').exists()
+    assert not (destination / 'audio').exists()
+    assert not (destination / 'licenses/motion_control-LICENSE.txt').exists()
     assert not (destination / 'robot/meshes/unused.STL').exists()
     assert not list(destination.rglob('credentials.yaml'))
     mesh = ET.parse(destination / 'robot/jc04.urdf').find('.//mesh')
