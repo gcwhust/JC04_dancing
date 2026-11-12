@@ -115,7 +115,7 @@ def build_submission(run_dir: Path, destination: Path, team_id: str = 'ROBOT2619
             'evidence_video_file': f'{prefix}_视频.mp4',
             'evidence_note': 'run.json video.file identifies the original recording filename; the identical video is named above. Original run SHA256 is preserved.',
             'limitations': report['limitations'],
-            'originality': 'User confirmed the four bundled choreographies are original team work; retained without inventing authorship details.',
+            'originality': 'User confirmed the two bundled choreographies are original team work; retained without inventing authorship details.',
             'files_sha256': {p.relative_to(staging).as_posix(): _sha256(p) for p in sorted(staging.rglob('*')) if p.is_file()},
         }
         (staging / 'manifest.json').write_text(json.dumps(metadata, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')

@@ -1,14 +1,22 @@
 # JC04 Dancing / 小楚机器人舞蹈仿真
 
-基于 **MuJoCo** 的小楚 JC04 机器人舞蹈仿真工程，包含机器人模型、四支舞蹈、视频录制、配乐、中文设计说明及提交材料生成工具。小楚拥有 **12 个自由度**：下肢 6 个（双髋、双膝、双驱动轮），上肢 6 个（双肩 pitch / roll、双肘 pitch）。
+基于 **MuJoCo** 的小楚 JC04 机器人舞蹈仿真工程，包含机器人模型、新年与豆豆龙两支舞蹈、视频录制、配乐、中文设计说明及提交材料生成工具。小楚拥有 **12 个自由度**：下肢 6 个（双髋、双膝、双驱动轮），上肢 6 个（双肩 pitch / roll、双肘 pitch）。
 
 ## 舞蹈预览
 
-[![点击观看完整舞蹈视频](docs/media/dance-preview.gif)](https://gcwhust.github.io/JC04_dancing/)
+### 新年 · `new_year`
 
-**[▶ 观看完整有声视频](https://gcwhust.github.io/JC04_dancing/)** · 83.333 秒 · 1920 × 1080 · 30 FPS
+[![点击观看新年完整舞蹈视频](docs/media/dance-preview.gif)](https://gcwhust.github.io/JC04_dancing/#new-year)
 
-预览 GIF 无声；点击后可播放完整视频。配乐从第 2 秒、舞蹈主体开始时进入。
+**[▶ 观看新年完整有声视频](https://gcwhust.github.io/JC04_dancing/#new-year)** · 83.333 秒 · 1920 × 1080 · 30 FPS
+
+### 豆豆龙 · `doudoulong`
+
+[![点击观看豆豆龙完整舞蹈视频](docs/media/doudoulong-preview.gif)](https://gcwhust.github.io/JC04_dancing/#doudoulong)
+
+**[▶ 观看豆豆龙完整无声视频](https://gcwhust.github.io/JC04_dancing/#doudoulong)** · 85 秒 · 1920 × 1080 · 30 FPS
+
+两张预览 GIF 均无声，点击可播放对应完整视频。新年配乐从第 2 秒、舞蹈主体开始时进入；豆豆龙尚未提供对应音乐，当前成片无音轨。
 
 ## 仿真模型
 
@@ -38,20 +46,19 @@ python -m pip install .
 
 ## 查看与播放舞蹈
 
-内置四支舞蹈，原动作采样率均为 24 FPS：
+内置两支舞蹈，原动作采样率均为 24 FPS：
 
 | 参数 `--dance` | 舞蹈 |
 |---|---|
 | `new_year` | 新年（默认） |
 | `doudoulong` | 豆豆龙 |
-| `shuangjiang` | 双桨 |
-| `lion` | 舞狮 |
 
 在有桌面的终端打开交互仿真窗口：
 
 ```bash
 python -m jc04_dancing list
 python -m jc04_dancing play --dance new_year --mode free
+python -m jc04_dancing play --dance doudoulong --mode free
 ```
 
 关闭窗口即可结束播放。交互播放展示机器人动作，配乐在后续视频合成时加入。
@@ -61,11 +68,12 @@ python -m jc04_dancing play --dance new_year --mode free
 ```bash
 MUJOCO_GL=egl python -m jc04_dancing list
 MUJOCO_GL=egl python -m jc04_dancing check --dance new_year --mode free
+MUJOCO_GL=egl python -m jc04_dancing check --dance doudoulong --mode free
 ```
 
 `check` 输出包含仿真时长、跌倒状态和数值警告的 JSON。无头渲染需要可用的 EGL；使用 NVIDIA GPU 时还需相应驱动。务必在启动 Python 前设置 `MUJOCO_GL=egl`。支持 OSMesa 的系统也可尝试 `MUJOCO_GL=osmesa`，本项目已验证的后端为 EGL。
 
-## 完整复现：录像 → 配乐 → 报告 → 提交包
+## 录像与新年提交材料复现
 
 ### 1. 录制完整仿真
 
@@ -73,9 +81,13 @@ MUJOCO_GL=egl python -m jc04_dancing check --dance new_year --mode free
 MUJOCO_GL=egl python -m jc04_dancing record \
   --dance new_year --mode free \
   --output outputs/reproduced/dance.mp4
+
+MUJOCO_GL=egl python -m jc04_dancing record \
+  --dance doudoulong --mode free \
+  --output outputs/doudoulong/dance.mp4
 ```
 
-默认录制全长 **1920 × 1080、30 FPS** 视频。`new_year` 生成 **2500 帧、83.333 秒** 的无声 H.264 视频，并保存 `run.json` 和 `stills/` 截图。录制耗时取决于硬件，首次运行可能需要数分钟。
+默认录制全长 **1920 × 1080、30 FPS** 无声 H.264 视频。`new_year` 生成 **2500 帧、83.333 秒**，`doudoulong` 生成 **2550 帧、85 秒**；各自保存 `run.json` 和 `stills/` 截图。录制耗时取决于硬件，首次运行可能需要数分钟。
 
 仅预览时可追加 `--duration 5 --width 960 --height 540`；正式报告需使用完整录像。录像目录必须为空，重录时请换一个输出目录。
 
@@ -87,11 +99,20 @@ python -m jc04_dancing add-audio \
   --output outputs/reproduced_audio
 ```
 
-生成 `outputs/reproduced_audio/dance.mp4`，保留原视频画面和时间轴，加入 AAC 立体声音轨。默认使用包内配乐，原速从 **2 秒** 开始，淡入 0.4 秒、淡出 0.8 秒，音乐结束后补静音至全片结束。
+生成 `outputs/reproduced_audio/dance.mp4`，保留原视频画面和时间轴，加入 AAC 立体声音轨。默认使用包内新年配乐，原速从 **2 秒** 开始，淡入 0.4 秒、淡出 0.8 秒，音乐结束后补静音至全片结束。
 
-可追加 `--audio /path/to/music.mp3` 指定音乐，或使用 `--timeline-start-seconds`、`--fade-in-seconds`、`--fade-out-seconds` 调整进入时间和淡入淡出。建议用浏览器或常规视频播放器试听；部分编辑器内置预览可能不支持 AAC 音频。
+豆豆龙默认保留无声录像。如需配乐，请自行提供对应音乐并明确传入 `--audio`：
 
-### 3. 生成中文设计说明与流程图
+```bash
+python -m jc04_dancing add-audio \
+  --run-dir outputs/doudoulong \
+  --audio /path/to/doudoulong-music.mp3 \
+  --output outputs/doudoulong_audio
+```
+
+可使用 `--timeline-start-seconds`、`--fade-in-seconds`、`--fade-out-seconds` 调整进入时间和淡入淡出。建议用浏览器或常规视频播放器试听；部分编辑器内置预览可能不支持 AAC 音频。
+
+### 3. 生成新年中文设计说明与流程图
 
 ```bash
 python -m jc04_dancing report \
@@ -99,9 +120,9 @@ python -m jc04_dancing report \
   --output outputs/reproduced_report/report.pdf
 ```
 
-输出 `report.pdf`、`report.json`、`flowchart.pdf` 和 `flowchart.png`。生成前会检查完整视频、运行记录及截图是否一致；截断预览、跌倒或有数值警告的运行不能用于正式报告。目前正式报告和提交包支持 **`new_year`**，其余三支可播放、检查和录像。
+输出 `report.pdf`、`report.json`、`flowchart.pdf` 和 `flowchart.png`。生成前会检查完整视频、运行记录及截图是否一致；截断预览、跌倒或有数值警告的运行不能用于正式报告。目前 `report` 和 `submit` **仅支持 `new_year`**；`doudoulong` 可播放、检查、录像及使用自备音乐合成音轨。
 
-### 4. 生成提交材料
+### 4. 生成新年提交材料
 
 在仓库根目录执行：
 
@@ -151,4 +172,4 @@ MUJOCO_GL=egl python -m pytest -q
 - [模型转换与接触说明](docs/model-conversion.md)：模型来源、转换和物理近似。
 - [素材来源与许可声明](src/jc04_dancing/assets/licenses/ASSET-NOTICES.md)、[配乐说明](docs/audio-provenance.md)：各类素材的来源与使用范围。
 
-四支舞蹈编排为本队原创。模型、字体等素材保留各自许可；模型的软件许可不自动覆盖音乐作品或录音，配乐权利与节拍同步情况见上述说明。本工程用于仿真展示，仿真结果不代表真机验证。
+两支舞蹈编排为本队原创。模型、字体等素材保留各自许可；模型的软件许可不自动覆盖音乐作品或录音，配乐权利与节拍同步情况见上述说明。本工程用于仿真展示，仿真结果不代表真机验证。

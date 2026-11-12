@@ -35,4 +35,15 @@ python -m jc04_dancing add-audio --run-dir outputs/reproduced --output outputs/r
 
 音视频技术检查已通过，节拍或旋律与动作的配合尚未完成主观验收，D04 保持待验证。包内原始来源清单仍保留提取时的 `candidate_pending_audio_review` 状态；实际成片是否添加音轨及其参数以对应的 `run.json` 为准。
 
-豆豆龙、双桨、舞狮尚未配置经核实的对应音乐。四支舞蹈均可独立进行仿真与无声录制。
+豆豆龙尚未提供对应音乐，当前85秒完整成片为无声 H.264 视频。新年与豆豆龙均可独立进行仿真与无声录制；上述默认合成参数及已完成的音频检查仅对应新年。
+
+为豆豆龙加入配乐时，请提供对应音乐文件并明确指定 `--audio`，例如：
+
+```bash
+python -m jc04_dancing add-audio \
+  --run-dir outputs/doudoulong \
+  --audio /path/to/doudoulong-music.mp3 \
+  --output outputs/doudoulong_audio
+```
+
+该操作不会完成音乐权利或节拍配合的验证，合成结果应另行试听核对。

@@ -96,8 +96,6 @@ def test_bad_fps(tmp_path, fps):
 @pytest.mark.parametrize(('filename', 'end'), [
     ('happy_new_year.csv', 1880 / 24),
     ('doudoulong_postprocess.csv', 1920 / 24),
-    ('shuangjiang0307.csv', 1860 / 24),
-    ('shizi0307.csv', 1500 / 24),
 ])
 def test_builtin_end_times_and_source_samples(filename, end):
     from jc04_dancing.motion import load_clip

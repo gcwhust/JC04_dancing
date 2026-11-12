@@ -50,20 +50,6 @@
       "transformation": "byte-for-byte copy"
     },
     {
-      "source": "JC04Dev/src/motion_control/motion_real/trajectory/shizi0307.csv",
-      "target": "motions/shizi0307.csv",
-      "source_sha256": "8c2a28f31dc017fa3a4e0cb80fdde1b7ed6ba413ea26fdeff66ca76a4b536e88",
-      "target_sha256": "8c2a28f31dc017fa3a4e0cb80fdde1b7ed6ba413ea26fdeff66ca76a4b536e88",
-      "transformation": "byte-for-byte copy"
-    },
-    {
-      "source": "JC04Dev/src/motion_control/motion_real/trajectory/shuangjiang0307.csv",
-      "target": "motions/shuangjiang0307.csv",
-      "source_sha256": "a98e143349baf03ad3154848da33efe2b4d84d9078fcdd833623a5de4fcef3b1",
-      "target_sha256": "a98e143349baf03ad3154848da33efe2b4d84d9078fcdd833623a5de4fcef3b1",
-      "transformation": "byte-for-byte copy"
-    },
-    {
       "source": "JC04Dev/src/jc04_desc4/urdf/jc04.urdf",
       "target": "robot/jc04.urdf",
       "source_sha256": "e954723967a1577ee54b3cf2b90575b619c79834b5fa3e6d56e491410da16f19",

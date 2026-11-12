@@ -4,7 +4,7 @@ model:
   root_joint: root
   support_equality: base_support
   # qpos0 already uses rest_deg; hinge refs preserve original URDF angles.
-  # Simulator-only playback envelope, verified against all four original clips.
+  # Simulator-only playback envelope, verified against both original clips.
   # Source URDF/XML ranges are retained. No claim about hardware range of motion.
   joint_range_overrides:
     right_shoulder_roll: [-0.18, 3.14]

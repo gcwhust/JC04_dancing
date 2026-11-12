@@ -12,6 +12,7 @@ docs/dance-c02-high.png
 docs/dance-c03-left.png
 docs/dance-c03-right.png
 docs/media/dance-preview.gif
+docs/media/doudoulong-preview.gif
 docs/model-conversion.md
 docs/model-initial.png
 docs/validation.md
@@ -26,8 +27,6 @@ src/jc04_dancing/assets/licenses/jc04_desc4-LICENSE.txt
 src/jc04_dancing/assets/licenses/motion_control-LICENSE.txt
 src/jc04_dancing/assets/motions/doudoulong_postprocess.csv
 src/jc04_dancing/assets/motions/happy_new_year.csv
-src/jc04_dancing/assets/motions/shizi0307.csv
-src/jc04_dancing/assets/motions/shuangjiang0307.csv
 src/jc04_dancing/assets/provenance.json
 src/jc04_dancing/assets/report/fonts/DejaVu-LICENSE.txt
 src/jc04_dancing/assets/report/fonts/DejaVuSans.ttf

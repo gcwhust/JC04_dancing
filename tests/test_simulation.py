@@ -177,11 +177,12 @@ def test_numerical_warning_is_failure(simulation):
         simulation.advance_to(.002)
 
 
-def test_timeline_units_and_selection():
-    timeline = build_timeline('lion')
-    assert timeline.dance_id == 'lion'
+@pytest.mark.parametrize(('dance_id', 'duration'), [('new_year', 1880 / 24 + 5), ('doudoulong', 85)])
+def test_timeline_units_and_selection(dance_id, duration):
+    timeline = build_timeline(dance_id)
+    assert timeline.dance_id == dance_id
     assert timeline.sample(0)['right_hip_pitch'] == pytest.approx(math.radians(40))
-    assert timeline.total_duration == pytest.approx(67.5)
+    assert timeline.total_duration == pytest.approx(duration)
     with pytest.raises(ValueError, match='Unknown dance'):
         build_timeline('missing')
 
@@ -190,13 +191,13 @@ def test_cli_list_without_display(capsys, monkeypatch):
     monkeypatch.delenv('DISPLAY', raising=False)
     assert main(['list']) == 0
     result = capsys.readouterr().out
-    assert all(name in result for name in ('new_year', 'doudoulong', 'shuangjiang', 'lion'))
+    assert {line.split('\t')[0] for line in result.splitlines()} == {'new_year', 'doudoulong'}
 
 
 def test_cli_check_summary(capsys):
-    assert main(['check', '--dance', 'lion', '--mode', 'supported', '--duration', '.01']) == 0
+    assert main(['check', '--dance', 'doudoulong', '--mode', 'supported', '--duration', '.01']) == 0
     result = json.loads(capsys.readouterr().out)
     assert result['mode'] == 'supported'
-    assert result['dance_id'] == 'lion'
+    assert result['dance_id'] == 'doudoulong'
     assert .01 <= result['simulation_time_s'] < .012 + 1e-9
     assert result['warnings'] == {}

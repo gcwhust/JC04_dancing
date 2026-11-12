@@ -65,6 +65,10 @@ def test_source_whitelist(packaged, tmp_path):
                     'src/jc04_dancing/assets/robot/robot.xml', 'src/jc04_dancing/assets/audio/happy_new_year.mp3',
                     'src/jc04_dancing/assets/motions/happy_new_year.csv']
         assert set(required) <= names
+        assert {name for name in names if name.endswith('.csv')} == {
+            'src/jc04_dancing/assets/motions/happy_new_year.csv',
+            'src/jc04_dancing/assets/motions/doudoulong_postprocess.csv',
+        }
         assert not any(part in {'.git', '.superpowers', 'outputs', '__pycache__', 'submission'} or
                        part.startswith('JC04-master-') for name in names for part in Path(name).parts)
         assert not any('credential' in name.lower() or '模拟仿真赛道任务说明书' in name for name in names)

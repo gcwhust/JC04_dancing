@@ -11,14 +11,6 @@ dances:
     name: 豆豆龙
     file: assets/motions/doudoulong_postprocess.csv
     fps: 24.0
-  shuangjiang:
-    name: 双桨
-    file: assets/motions/shuangjiang0307.csv
-    fps: 24.0
-  lion:
-    name: 舞狮
-    file: assets/motions/shizi0307.csv
-    fps: 24.0
 transition:
   prep: 2.0
   return: 2.0

@@ -14,7 +14,7 @@
 ```bash
 conda run -n jc04_dancing python -m jc04_dancing list
 conda run -n jc04_dancing python -m jc04_dancing check --dance new_year --mode free
-conda run -n jc04_dancing python -m jc04_dancing check --dance lion --mode supported --duration 5
+conda run -n jc04_dancing python -m jc04_dancing check --dance doudoulong --mode free
 conda run -n jc04_dancing python -m jc04_dancing play --dance new_year --mode free
 ```
 
@@ -23,8 +23,8 @@ conda run -n jc04_dancing python -m jc04_dancing play --dance new_year --mode fr
 严格验证首先发现新年舞蹈在完整时间轴 `t=7.876 s` 的右肩 roll 为
 `−0.000128825941 rad`，超出源 URDF 的 `[0, 3.14]`。
 核对原 CSV 的命名列、度/弧度转换及 URDF 同名关节后，确认不是左右、符号
-或单位映射问题。默认舞蹈是三次插值在零附近的少量下冲；其他曲目原 CSV
-本身已有负肩 roll 和 120° 肘角。没有裁剪 CSV、改变插值或改编动作。
+或单位映射问题。新年与豆豆龙的肩 roll 经三次插值后在零附近有少量下冲；
+豆豆龙原 CSV 还包含120°肘角，超出源肘关节上限。没有裁剪 CSV、改变插值或改编动作。
 
 初次按0.002秒网格检查全时间轴，相关极值如下；当前运行还会按0.0005秒网格
 重新严格验证所有原目标。这不是连续曲线极值的解析求解。
@@ -33,8 +33,6 @@ conda run -n jc04_dancing python -m jc04_dancing play --dance new_year --mode fr
 |---|---|---|
 | new_year | −0.000949889 / −0.000956534 | 小于源上限 1.85 |
 | doudoulong | −0.001204854 / −0.001204854 | 2.094737610 / 2.094454086 |
-| shuangjiang | −0.087302395 / −0.111149263 | 2.094408990 / 2.094408999 |
-| lion | −0.174646940 / −0.174554823 | 1.920181764 / 1.920181764 |
 
 `robot.yaml.model.joint_range_overrides` 明确扩大**仿真播放**范围，编译后的
 运行时模型使用以下值；源 URDF 保留原字节，包内 XML仍保留这些原关节限位。
@@ -44,8 +42,9 @@ conda run -n jc04_dancing python -m jc04_dancing play --dance new_year --mode fr
 | shoulder_roll | [0, 3.14] | [−0.18, 3.14] | 下界 −0.18 rad（约10.313°） |
 | elbow_pitch | [−1.5708, 1.85] | [−1.5708, 2.10] | 上界 +0.25 rad（约14.324°） |
 
-最接近新增下界的是舞狮右肩 roll，余量约 0.00535306 rad；最接近新增上界
-的是豆豆龙右肘，余量约 0.00526239 rad。四支动作所有原目标均再次经过修改后
+在这两支舞蹈的上述采样结果中，最接近肩 roll 新增下界的是豆豆龙双肩，
+余量约 0.17879515 rad；最接近肘 pitch 新增上界的是豆豆龙右肘，余量约
+0.00526239 rad。两支动作所有原目标均再次经过修改后
 范围验证。每次 JSON 结果记录源/运行范围，不能把这些值解释为已验证真机 ROM。
 身体自碰撞未启用等模型近似继续见 [model-conversion.md](model-conversion.md)。
 
@@ -94,10 +93,28 @@ KP/KD、力矩上限及原动作，只将步长改为0.0005秒，可把被动轮
 水平位移0.033392633m，无跌倒或数值警告。代表时刻和三类动作画面已检查，
 报告截图与同一视频逐像素一致。`outputs/` 为本地生成目录，不随源码分发。
 
+## 豆豆龙完整物理检查与录像（2026-11-12）
+
+对当前 `doudoulong` 执行完整 `check --mode free`，使用锁轮配置与0.0005秒
+物理步长。时间轴包含2秒准备、80秒主体、2秒回位及1秒保持，总计85秒、
+170000个积分步。检查未发现跌倒或数值警告。
+
+- 最大水平位移 **0.030668 m**，最低基座高度0.518209 m，最大倾角6.328107°。
+- 轮子最大角偏移 `1.748231e-6 rad`，最大角速度 `1.165794e-4 rad/s`。
+- 全程十关节最大控制力矩 **16.729317 N·m**。
+
+完整录像位于 `outputs/doudoulong_locked`，实际解码2550帧、85秒、1920×1080、
+30 FPS，首、中、尾截图已检查，录像物理摘要与完整检查一致。当前未提供
+对应音乐，成片无音轨；不将视频或物理检查等同于音乐同步验证。
+
+精简动作目录后，新年也重新完整录制到 `outputs/new_year_two_dances_silent`，
+再合成配乐到 `outputs/new_year_two_dances_audio`，以匹配当前资源校验值。
+新年原动作字节、解析后的机器人配置和完整物理摘要均与此前验证结果一致。
+
 ## 普通安装后的独立复现
 
 2026-11-11 验证从实际源码 ZIP 解压到新目录，普通 `python -m pip install .`，
-再切到独立空目录执行四支舞蹈列表、完整默认检查和完整1080p无声录像。
+再切到独立空目录执行舞蹈列表、完整默认检查和完整1080p无声录像。
 验证环境为 Python3.10.22/pip26.2.1；没有使用 editable 安装、PYTHONPATH、
 外部参考工程或系统 FFmpeg。
 
@@ -146,8 +163,8 @@ a18b52273baf30701177622b12e9f69501a144ac055c5e5d01ac819aba0b8019
 | 2026-11-12 公开仓库整理后的完整 EGL 测试 | 146 passed / 281.60秒 |
 
 公开版还通过普通 `pip install .` 安装及 `pip check`，从仓库外执行舞蹈列表与
-配乐命令帮助。预览页中的完整视频与已验证的有声成片字节一致，音轨为
-AAC 48kHz立体声；另附 14 秒 GIF 作为 README 内的无声片段预览。
+配乐命令帮助。预览页中的新年完整视频与已验证的有声成片字节一致，音轨为
+AAC 48kHz立体声；新年另附 14 秒 GIF 作为 README 内的无声片段预览。
 
 音频边界验证包括44.1kHz输入先重采样到48kHz、音乐按指定视频时刻进入，以及
 淡入/淡出设为0时省略对应滤镜。复核当前源码可运行：

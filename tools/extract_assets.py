@@ -12,7 +12,7 @@ import xml.etree.ElementTree as ET
 SNAPSHOT = "2d224d13d624e07102a2c6eedbaf111694555e16"
 DESC = "JC04Dev/src/jc04_desc4"
 MOTION = "JC04Dev/src/motion_control/motion_real/trajectory"
-MOTIONS = ("happy_new_year.csv", "doudoulong_postprocess.csv", "shuangjiang0307.csv", "shizi0307.csv")
+MOTIONS = ("happy_new_year.csv", "doudoulong_postprocess.csv")
 
 
 def extract(source: Path, destination: Path) -> None:
@@ -65,7 +65,7 @@ def extract(source: Path, destination: Path) -> None:
         "The source model package supplies Apache-2.0; its license is preserved here. "
         "Only mesh URI prefixes in the URDF were normalized; no model geometry or dance CSV was changed.\n\n"
         "Dance CSVs: preserved from motion_control; the source package license, when present, is copied separately. "
-        "The user confirmed the four built-in dance choreographies are the team's original work and authorized public extraction of these assets. "
+        "The user confirmed the two built-in dance choreographies are the team's original work and authorized public extraction of these assets. "
         "No author names or creation dates are inferred.\n\n"
         "Audio: happy_new_year.mp3 is a candidate copied from the local trajectory directory. "
         "Its selection, sync and redistribution status require the dedicated audio review. "
