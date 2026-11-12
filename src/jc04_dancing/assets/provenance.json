@@ -20,7 +20,7 @@
       "target": "audio/swan_lake.mp3",
       "source_sha256": "b9ed92bf882a4ec7e13134d76741020fcb1caf7106da06c14629dc69b9f3c9bd",
       "target_sha256": "6f3218f4029790511066d479334463f643adbfe0c6131c47912c5a05b784b77e",
-      "transformation": "Continuous original-speed excerpt55.2–149.2s; gain2; baked fades0.4/2.8s; MP3 transcode; see audio/swan_lake_source.json"
+      "transformation": "Continuous original-speed excerpt55.2\u2013149.2s; gain2; baked fades0.4/2.8s; MP3 transcode; see audio/swan_lake_source.json"
     },
     {
       "source": "JC04Dev/src/jc04_desc4/LICENSE",
@@ -32,15 +32,15 @@
     {
       "source": "src/jc04_dancing/choreography.py",
       "target": "motions/swan_lake.csv",
-      "source_sha256": "2339ccaa81c3a68737bd0d38f1aa9d6dadd813598951a8d05a0eb4e1eccbb1f7",
-      "target_sha256": "ceb668d1d889ac6cd633665d7702cf130e0725a24e8fc8d21f9cd143dfabea74",
+      "source_sha256": "e60706250c4d8a399e15da7d582a9bc5815777537a329d071d50b213f3c404d5",
+      "target_sha256": "2edd00662e4f945f0bf50ebe2ea914c3f6c723f37782aa48a4994e6511e21ec0",
       "transformation": "Deterministic original full-body Swan Lake choreography export; ten joint angles and two wheel velocities"
     },
     {
       "source": "src/jc04_dancing/choreography.py",
       "target": "motions/swan_lake.phrases.json",
-      "source_sha256": "2339ccaa81c3a68737bd0d38f1aa9d6dadd813598951a8d05a0eb4e1eccbb1f7",
-      "target_sha256": "5f1dc5be49767c89afd5c9c315c430fa45c3dda9acf8a5f4df3ee39127fe603c",
+      "source_sha256": "e60706250c4d8a399e15da7d582a9bc5815777537a329d071d50b213f3c404d5",
+      "target_sha256": "b3ea0fcb355b76aba22728f8ceb6618333f401a20c59e3c70d6a9dbc35ee10d2",
       "transformation": "Deterministic original full-body Swan Lake choreography export; ten joint angles and two wheel velocities"
     },
     {

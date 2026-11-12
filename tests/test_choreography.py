@@ -23,15 +23,17 @@ def test_generated_score_has_visible_legs_wings_and_driven_turns(tmp_path):
     for side in ('right', 'left'):
         hip = np.rad2deg([pose[f'{side}_hip_pitch'] for pose in samples])
         knee = np.rad2deg([pose[f'{side}_knee_pitch'] for pose in samples])
-        assert np.ptp(hip) >= 12
-        assert np.ptp(knee) >= 12
+        assert np.ptp(hip) >= 32
+        assert np.ptp(knee) >= 32
         assert knee - hip == pytest.approx(np.full(len(samples), 60.7787), abs=1e-7)
         assert np.ptp([pose[f'{side}_shoulder_roll'] for pose in samples]) > math.radians(130)
-    assert wheels.max() >= .65
-    assert wheels.min() <= -.4
-    assert np.max(np.abs(wheels[:, 0] - wheels[:, 1])) >= .25
+        assert np.ptp([pose[f'{side}_shoulder_pitch'] for pose in samples]) >= math.radians(120)
+        assert np.ptp([pose[f'{side}_elbow_pitch'] for pose in samples]) >= math.radians(95)
+    assert wheels.max() >= .95
+    assert wheels.min() <= -.85
+    assert np.max(np.abs(wheels[:, 0] - wheels[:, 1])) >= .55
     assert np.isfinite(wheels).all()
-    assert np.abs(wheels).max() <= .9
+    assert np.abs(wheels).max() <= 1.5
     assert clip.wheel_velocities(0) == {'right_wheel_joint': 0, 'left_wheel_joint': 0}
     assert clip.wheel_velocities(94) == {'right_wheel_joint': 0, 'left_wheel_joint': 0}
     manifest = json.loads(phrases.read_text())
@@ -40,6 +42,33 @@ def test_generated_score_has_visible_legs_wings_and_driven_turns(tmp_path):
     assert manifest['sections'][-1]['end_s'] == 94
     assert len(manifest['sections']) >= 5
     assert all(a['end_s'] == b['start_s'] for a, b in zip(manifest['sections'], manifest['sections'][1:]))
+
+
+def test_score_distinguishes_forward_reaches_folds_diagonals_and_crown(tmp_path):
+    """Large roll alone must not stand in for a varied arm vocabulary."""
+    from jc04_dancing.choreography import write_swan_lake
+    from jc04_dancing.motion import load_clip
+    path, phrases = tmp_path / 'motion.csv', tmp_path / 'phrases.json'
+    write_swan_lake(path, phrases)
+    clip = load_clip(path)
+    metadata = json.loads(phrases.read_text())
+    poses = [clip.sample(event['body_time_s']) for event in metadata['pose_events']]
+    arms = {
+        side: np.rad2deg([[pose[f'{side}_{joint}'] for joint in
+                          ('shoulder_pitch', 'shoulder_roll', 'elbow_pitch')]
+                         for pose in poses])
+        for side in ('right', 'left')
+    }
+    right, left = arms['right'], arms['left']
+    for own, other in ((right, left), (left, right)):
+        pitch, roll, elbow = own.T
+        # Front-facing reaches, compact gathers and high diagonal answers are
+        # separate silhouettes, rather than the same wing at different heights.
+        assert np.any((pitch > 70) & (roll < 50) & (elbow < 30))
+        assert np.any((elbow > 90) & (roll < 60) & (pitch < 45))
+        assert np.any((roll > 135) & (other[:, 0] > 70) & (other[:, 1] < 60))
+    assert np.any((right[:, 1] > 155) & (left[:, 1] > 155)
+                  & (right[:, 2] < 25) & (left[:, 2] < 25))
 
 
 def test_export_is_deterministic_and_includes_endpoint_at_fractional_duration(tmp_path):

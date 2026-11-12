@@ -25,49 +25,49 @@
       "name": "展翼",
       "start_s": 0.0,
       "end_s": 12.4,
-      "description": "Both wings open through a soft plié; the wheels begin a gentle forward glide."
+      "description": "Low scoops unfold into long forward reaches, then folded wings open into the first high arc over a broad plié."
     },
     {
       "id": "glides_and_plies",
       "name": "滑行与屈伸",
       "start_s": 12.4,
       "end_s": 24.8,
-      "description": "Broad symmetric wings accompany visible leg extension, plié and a controlled retreat."
+      "description": "Gathered elbows open into high forward reaches; deep pliés alternate with extension during a long glide and sweeping retreat."
     },
     {
       "id": "answering_curves",
       "name": "左右应答与弧线",
       "start_s": 24.8,
       "end_s": 44.3,
-      "description": "Alternating high wings answer each other while differential wheel speeds trace two gentle curves."
+      "description": "One wing crowns while the other reaches forward or folds; the diagonals exchange through two broad wheel-driven curves."
     },
     {
       "id": "building_flight",
       "name": "渐强飞翔",
       "start_s": 44.3,
       "end_s": 64.8,
-      "description": "The wing gestures broaden over coordinated rise and sink; the forward glide grows then eases."
+      "description": "A deep gather releases into forward flight, alternating high diagonals and wide wings; a final plié prepares the crown."
     },
     {
       "id": "swan_climax",
       "name": "天鹅高展",
       "start_s": 64.8,
       "end_s": 67.4,
-      "description": "Both wings reach their highest crown as the legs extend and the wheels come to rest."
+      "description": "Both wings reach their highest overhead crown as the legs extend and the wheels come to rest."
     },
     {
       "id": "floating_release",
       "name": "舒缓回落",
       "start_s": 67.4,
       "end_s": 86.8,
-      "description": "Asymmetric wings soften into a retreat with gentle counter-curves and decreasing travel."
+      "description": "High and forward wings answer across retreating counter-curves, gathering once more before a final forward offering and open-wing release."
     },
     {
       "id": "reverence",
       "name": "谢幕",
       "start_s": 86.8,
       "end_s": 94.0,
-      "description": "A deliberate plié and gathered wings resolve to the standing pose and still wheels."
+      "description": "Gathered elbows and forward arms deepen into a sustained plié, then lower together into the standing pose and final stillness."
     }
   ],
   "pose_events": [
@@ -77,15 +77,15 @@
     },
     {
       "body_time_s": 3.1,
-      "name": "first_wing_unfolding"
+      "name": "low_water_scoop"
     },
     {
       "body_time_s": 6.2,
-      "name": "open_water"
+      "name": "first_forward_reach"
     },
     {
       "body_time_s": 9.3,
-      "name": "soft_wing_descent"
+      "name": "folded_wing_opening"
     },
     {
       "body_time_s": 12.4,
@@ -93,7 +93,7 @@
     },
     {
       "body_time_s": 15.5,
-      "name": "glide_and_fold"
+      "name": "gliding_scoop_and_fold"
     },
     {
       "body_time_s": 18.6,
@@ -101,47 +101,47 @@
     },
     {
       "body_time_s": 21.7,
-      "name": "gather_and_retreat"
+      "name": "sweeping_wings_retreat"
     },
     {
       "body_time_s": 24.8,
-      "name": "answering_wing"
+      "name": "right_high_left_front"
     },
     {
       "body_time_s": 28.05,
-      "name": "right_curve"
+      "name": "right_crown_left_fold"
     },
     {
       "body_time_s": 31.3,
-      "name": "right_curve_extension"
+      "name": "right_reach_left_open"
     },
     {
       "body_time_s": 34.55,
-      "name": "wings_cross_the_phrase"
+      "name": "left_wing_unfolding"
     },
     {
       "body_time_s": 37.8,
-      "name": "left_answer"
+      "name": "left_high_right_front"
     },
     {
       "body_time_s": 41.05,
-      "name": "left_curve_extension"
+      "name": "left_reach_right_open"
     },
     {
       "body_time_s": 44.3,
-      "name": "gather_before_flight"
+      "name": "deep_gather_before_flight"
     },
     {
       "body_time_s": 47.7,
-      "name": "rising_wingbeat"
+      "name": "rising_forward_wings"
     },
     {
       "body_time_s": 51.1,
-      "name": "flowing_right_wing"
+      "name": "flowing_right_diagonal"
     },
     {
       "body_time_s": 54.5,
-      "name": "flowing_left_wing"
+      "name": "flowing_left_diagonal"
     },
     {
       "body_time_s": 57.9,
@@ -165,7 +165,7 @@
     },
     {
       "body_time_s": 73.8,
-      "name": "soft_gather"
+      "name": "soft_water_gather"
     },
     {
       "body_time_s": 77.0,
@@ -173,11 +173,11 @@
     },
     {
       "body_time_s": 80.2,
-      "name": "last_wide_wing"
+      "name": "last_forward_offering"
     },
     {
       "body_time_s": 83.5,
-      "name": "lower_the_wings"
+      "name": "last_open_wings"
     },
     {
       "body_time_s": 86.8,
@@ -185,7 +185,7 @@
     },
     {
       "body_time_s": 89.2,
-      "name": "reverence"
+      "name": "deep_reverence"
     },
     {
       "body_time_s": 92.2,

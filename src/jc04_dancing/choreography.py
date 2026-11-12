@@ -1,4 +1,4 @@
-"""Original Swan Lake score: phrase-led wings, pliés, glides and a reverence.
+"""Original Swan Lake score: unfolding wings, reaches, diagonals and reverence.
 
 The score is authored in joint space for JC04, not copied from a dance dataset.
 Each pose event joins the next with a quintic easing curve (zero velocity and
@@ -22,48 +22,51 @@ REFERENCE_DURATION_S = 94.0
 # common hip/knee offset, forward wheel speed, differential wheel speed.
 # Equal hip/knee increments preserve lower-leg orientation and the support
 # wheel geometry. Symmetric pliés avoid lifting an entire side of the chassis.
+# Pitch changes give the wings depth: low scoops unfold into forward reaches,
+# then trade places with high lateral diagonals. Elbows fold between extensions
+# instead of retaining a single wing silhouette throughout the music.
 _POSES = (
     (0.0, 'quiet_preparation', (8, 18, 30), (8, 18, 30), 0, 0, 0),
-    (3.1, 'first_wing_unfolding', (10, 62, 26), (10, 62, 26), 4, .20, 0),
-    (6.2, 'open_water', (5, 106, 17), (5, 106, 17), -3, .38, 0),
-    (9.3, 'soft_wing_descent', (20, 70, 38), (20, 70, 38), 7, .22, 0),
-    (12.4, 'first_high_arc', (4, 128, 18), (4, 128, 18), -4, 0, 0),
-    (15.5, 'glide_and_fold', (26, 52, 52), (26, 52, 52), 8, .50, 0),
-    (18.6, 'long_forward_glide', (6, 116, 20), (6, 116, 20), -4, .70, 0),
-    (21.7, 'gather_and_retreat', (30, 68, 48), (30, 68, 48), 8, -.48, 0),
-    (24.8, 'answering_wing', (-8, 120, 20), (25, 58, 45), -2, -.30, .14),
-    (28.05, 'right_curve', (-16, 138, 16), (30, 72, 50), 7, .46, .16),
-    (31.3, 'right_curve_extension', (10, 114, 26), (16, 98, 32), -4, .54, .16),
-    (34.55, 'wings_cross_the_phrase', (28, 54, 48), (-8, 126, 18), 8, .18, 0),
-    (37.8, 'left_answer', (30, 70, 50), (-16, 138, 16), -3, -.42, -.16),
-    (41.05, 'left_curve_extension', (16, 98, 32), (10, 114, 26), 6, -.52, -.16),
-    (44.3, 'gather_before_flight', (30, 46, 60), (30, 46, 60), 9, 0, 0),
-    (47.7, 'rising_wingbeat', (4, 124, 20), (4, 124, 20), -4, .44, 0),
-    (51.1, 'flowing_right_wing', (-12, 142, 16), (22, 84, 40), 7, .56, .10),
-    (54.5, 'flowing_left_wing', (22, 84, 40), (-12, 142, 16), -4, .56, -.10),
-    (57.9, 'wide_swan_arc', (0, 136, 16), (0, 136, 16), 7, .66, 0),
-    (61.3, 'deep_plie_before_climax', (32, 64, 54), (32, 64, 54), 9, .36, 0),
-    (65.9, 'full_swan_crown', (0, 156, 14), (0, 156, 14), -5, 0, 0),
-    (69.0, 'release_into_quiet', (24, 92, 42), (24, 92, 42), 6, -.24, 0),
-    (70.6, 'floating_right_response', (-8, 124, 22), (26, 68, 44), -2, -.46, .12),
-    (73.8, 'soft_gather', (28, 64, 48), (28, 64, 48), 7, -.26, 0),
-    (77.0, 'floating_left_response', (26, 68, 44), (-8, 124, 22), -3, -.46, -.12),
-    (80.2, 'last_wide_wing', (8, 116, 24), (8, 116, 24), 6, -.30, 0),
-    (83.5, 'lower_the_wings', (20, 76, 38), (20, 76, 38), 0, -.16, 0),
-    (86.8, 'reverence_begins', (30, 42, 55), (30, 42, 55), 8, 0, 0),
-    (89.2, 'reverence', (38, 24, 62), (38, 24, 62), 9, 0, 0),
+    (3.1, 'low_water_scoop', (24, 44, 100), (24, 44, 100), 12, .15, 0),
+    (6.2, 'first_forward_reach', (82, 28, 12), (82, 28, 12), -10, .55, 0),
+    (9.3, 'folded_wing_opening', (12, 72, 80), (12, 72, 80), 16, .25, 0),
+    (12.4, 'first_high_arc', (-22, 142, 10), (-22, 142, 10), -12, 0, 0),
+    (15.5, 'gliding_scoop_and_fold', (62, 30, 94), (62, 30, 94), 18, .60, 0),
+    (18.6, 'long_forward_glide', (108, 38, 8), (108, 38, 8), -14, 1.10, 0),
+    (21.7, 'sweeping_wings_retreat', (-36, 104, 42), (-36, 104, 42), 16, -.95, 0),
+    (24.8, 'right_high_left_front', (-42, 148, 12), (94, 34, 18), -8, -.50, .30),
+    (28.05, 'right_crown_left_fold', (-26, 156, 18), (42, 52, 96), 16, .80, .34),
+    (31.3, 'right_reach_left_open', (84, 42, 14), (14, 118, 64), -12, .95, .32),
+    (34.55, 'left_wing_unfolding', (30, 48, 98), (-30, 142, 14), 18, .30, 0),
+    (37.8, 'left_high_right_front', (94, 34, 18), (-42, 148, 12), -10, -.80, -.34),
+    (41.05, 'left_reach_right_open', (14, 118, 64), (84, 42, 14), 14, -.95, -.32),
+    (44.3, 'deep_gather_before_flight', (24, 44, 100), (24, 44, 100), 20, 0, 0),
+    (47.7, 'rising_forward_wings', (108, 38, 8), (108, 38, 8), -12, .75, 0),
+    (51.1, 'flowing_right_diagonal', (-34, 154, 10), (92, 42, 26), 14, 1.05, .25),
+    (54.5, 'flowing_left_diagonal', (92, 42, 26), (-34, 154, 10), -12, 1.05, -.25),
+    (57.9, 'wide_swan_arc', (-18, 144, 8), (-18, 144, 8), 12, 1.15, 0),
+    (61.3, 'deep_plie_before_climax', (36, 58, 94), (36, 58, 94), 20, .50, 0),
+    (65.9, 'full_swan_crown', (0, 165, 14), (0, 165, 14), -14, 0, 0),
+    (69.0, 'release_into_quiet', (18, 112, 52), (18, 112, 52), 12, -.40, 0),
+    (70.6, 'floating_right_response', (-28, 144, 18), (82, 42, 18), 0, -.90, .28),
+    (73.8, 'soft_water_gather', (24, 44, 100), (24, 44, 100), 16, -.55, 0),
+    (77.0, 'floating_left_response', (82, 42, 18), (-28, 144, 18), -10, -.90, -.28),
+    (80.2, 'last_forward_offering', (98, 38, 10), (98, 38, 10), 12, -.65, 0),
+    (83.5, 'last_open_wings', (0, 122, 28), (0, 122, 28), -6, -.25, -.24),
+    (86.8, 'reverence_begins', (24, 44, 92), (24, 44, 92), 14, 0, 0),
+    (89.2, 'deep_reverence', (42, 22, 52), (42, 22, 52), 20, 0, 0),
     (92.2, 'settle_at_rest', (0, 0, 0), (0, 0, 0), 0, 0, 0),
     (94.0, 'final_stillness', (0, 0, 0), (0, 0, 0), 0, 0, 0),
 )
 
 _SECTIONS = (
-    ('opening_wings', '展翼', 0, 12.4, 'Both wings open through a soft plié; the wheels begin a gentle forward glide.'),
-    ('glides_and_plies', '滑行与屈伸', 12.4, 24.8, 'Broad symmetric wings accompany visible leg extension, plié and a controlled retreat.'),
-    ('answering_curves', '左右应答与弧线', 24.8, 44.3, 'Alternating high wings answer each other while differential wheel speeds trace two gentle curves.'),
-    ('building_flight', '渐强飞翔', 44.3, 64.8, 'The wing gestures broaden over coordinated rise and sink; the forward glide grows then eases.'),
-    ('swan_climax', '天鹅高展', 64.8, 67.4, 'Both wings reach their highest crown as the legs extend and the wheels come to rest.'),
-    ('floating_release', '舒缓回落', 67.4, 86.8, 'Asymmetric wings soften into a retreat with gentle counter-curves and decreasing travel.'),
-    ('reverence', '谢幕', 86.8, 94.0, 'A deliberate plié and gathered wings resolve to the standing pose and still wheels.'),
+    ('opening_wings', '展翼', 0, 12.4, 'Low scoops unfold into long forward reaches, then folded wings open into the first high arc over a broad plié.'),
+    ('glides_and_plies', '滑行与屈伸', 12.4, 24.8, 'Gathered elbows open into high forward reaches; deep pliés alternate with extension during a long glide and sweeping retreat.'),
+    ('answering_curves', '左右应答与弧线', 24.8, 44.3, 'One wing crowns while the other reaches forward or folds; the diagonals exchange through two broad wheel-driven curves.'),
+    ('building_flight', '渐强飞翔', 44.3, 64.8, 'A deep gather releases into forward flight, alternating high diagonals and wide wings; a final plié prepares the crown.'),
+    ('swan_climax', '天鹅高展', 64.8, 67.4, 'Both wings reach their highest overhead crown as the legs extend and the wheels come to rest.'),
+    ('floating_release', '舒缓回落', 67.4, 86.8, 'High and forward wings answer across retreating counter-curves, gathering once more before a final forward offering and open-wing release.'),
+    ('reverence', '谢幕', 86.8, 94.0, 'Gathered elbows and forward arms deepen into a sustained plié, then lower together into the standing pose and final stillness.'),
 )
 
 
