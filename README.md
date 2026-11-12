@@ -1,5 +1,7 @@
 # JC04 Dancing / 小楚机器人舞蹈仿真
 
+[**Homepage · 项目主页**](https://gcwhust.github.io/JC04_dancing/) · [演示视频](https://gcwhust.github.io/JC04_dancing/#swan-lake) · [设计说明 PDF](https://gcwhust.github.io/JC04_dancing/media/design.pdf)
+
 小楚 JC04 在 **MuJoCo 3.3.7** 中演绎《天鹅湖》。重新编排的动作把大幅前举、屈肘收展、左右斜向应答、髋膝起伏与轮式滑行转向写入同一份 CSV，由同一仿真时钟执行。
 
 [![点击播放完整有声视频](docs/media/swan-lake-preview.gif)](https://gcwhust.github.io/JC04_dancing/#swan-lake)

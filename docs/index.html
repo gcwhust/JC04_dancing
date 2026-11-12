@@ -19,11 +19,14 @@
     .dance { scroll-margin-top: 24px; }
     .player { border: 1px solid #dfe5e7; border-radius: 12px; background: #e4edf4; overflow: hidden; }
     video { display: block; width: 100%; aspect-ratio: 16 / 9; }
-    .links { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 32px; margin-top: 18px; }
+    .links { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
     a { color: #526671; text-decoration: none; text-underline-offset: 5px; }
     a:hover { color: #1d5864; text-decoration: underline; }
-    .links a { display: inline-flex; align-items: center; min-height: 44px; font-size: 14px; }
-    .links a:first-child { color: #1d5864; font-weight: 600; }
+    .links a { display: inline-flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; padding: 11px 18px; border: 1px solid #cbd5dc; border-radius: 8px; background: #fff; color: #243d4c; font-size: 14px; font-weight: 500; box-shadow: 0 1px 2px #182e3b06; }
+    .links a:hover { border-color: #718e9d; background: #f1f5f7; text-decoration: none; box-shadow: 0 3px 8px #182e3b0a; }
+    .links .icon { width: 20px; height: 20px; flex: none; }
+    .links .icon-github { color: #24292f; }
+    .links .icon-pdf { width: 24px; height: 24px; color: #b44242; }
     a:focus-visible { outline: 2px solid #1d5864; outline-offset: 5px; border-radius: 2px; }
     footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e1e6e5; font-size: 12px; }
     footer a { display: inline-flex; align-items: center; min-height: 32px; }
@@ -34,7 +37,8 @@
       .competition { font-size: 13px; }
       h1 { margin-top: 22px; }
       .player { border-radius: 8px; }
-      .links { column-gap: 24px; margin-top: 12px; }
+      .links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+      .links a { padding: 11px 10px; }
       footer { margin-top: 28px; }
     }
   </style>
@@ -56,10 +60,39 @@
         </video>
       </div>
       <nav class="links" aria-label="视频与资料">
-        <a href="media/swan-lake.mp4?v=ae98d1d3" download>下载视频</a>
-        <a href="https://github.com/gcwhust/JC04_dancing#readme">源码与复现</a>
-        <a href="media/design.pdf">设计说明</a>
-        <a href="media/workflow.png">流程图</a>
+        <a href="media/swan-lake.mp4?v=ae98d1d3" download>
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>
+          <span>下载视频</span>
+        </a>
+        <a href="https://github.com/gcwhust/JC04_dancing#readme">
+          <!-- GitHub mark: https://github.com/primer/octicons (MIT License).
+          Copyright (c) 2026 GitHub Inc.
+          Permission is hereby granted, free of charge, to any person obtaining a copy
+          of this software and associated documentation files (the "Software"), to deal
+          in the Software without restriction, including without limitation the rights
+          to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+          copies of the Software, and to permit persons to whom the Software is
+          furnished to do so, subject to the following conditions:
+          The above copyright notice and this permission notice shall be included in all
+          copies or substantial portions of the Software.
+          THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+          IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+          FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+          AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+          LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+          OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+          SOFTWARE. -->
+          <svg class="icon icon-github" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false"><path d="M6.766 11.328c-2.063-.25-3.516-1.734-3.516-3.656 0-.781.281-1.625.75-2.188-.203-.515-.172-1.609.063-2.062.625-.078 1.468.25 1.968.703.594-.187 1.219-.281 1.985-.281.765 0 1.39.094 1.953.265.484-.437 1.344-.765 1.969-.687.218.422.25 1.515.046 2.047.5.593.766 1.39.766 2.203 0 1.922-1.453 3.375-3.547 3.64.531.344.89 1.094.89 1.954v1.625c0 .468.391.734.86.547C13.781 14.359 16 11.53 16 8.03 16 3.61 12.406 0 7.984 0 3.563 0 0 3.61 0 8.031a7.88 7.88 0 0 0 5.172 7.422c.422.156.828-.125.828-.547v-1.25c-.219.094-.5.156-.75.156-1.031 0-1.64-.562-2.078-1.609-.172-.422-.36-.672-.719-.719-.187-.015-.25-.093-.25-.187 0-.188.313-.328.625-.328.453 0 .844.281 1.25.86.313.452.64.655 1.031.655s.641-.14 1-.5c.266-.265.47-.5.657-.656"/></svg>
+          <span>GitHub 源码</span>
+        </a>
+        <a href="media/design.pdf">
+          <svg class="icon icon-pdf" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 2.5h8l4 4V21H6zM14 2.5V7h4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><rect x="2" y="11" width="20" height="9" rx="1.5" fill="currentColor"/><text x="12" y="17.6" fill="#fff" text-anchor="middle" font-family="Arial, sans-serif" font-size="7" font-weight="700">PDF</text></svg>
+          <span>设计说明</span>
+        </a>
+        <a href="media/workflow.png">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="8" y="2.5" width="8" height="5" rx="1"/><path d="M12 7.5V12M5 16v-4h14v4"/><rect x="1.5" y="16" width="7" height="5" rx="1"/><rect x="15.5" y="16" width="7" height="5" rx="1"/></svg>
+          <span>流程图</span>
+        </a>
       </nav>
     </section>
     <footer><a href="https://github.com/gcwhust/JC04_dancing/blob/main/docs/audio-provenance.md">配乐来源</a></footer>
