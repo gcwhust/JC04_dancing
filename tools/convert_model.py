@@ -201,9 +201,11 @@ def convert(urdf, output):
     equality = ET.SubElement(scene, 'equality')
     ET.SubElement(equality, 'weld', name='base_support', body1='robot_base', active='false')
     wheels = settings['wheels']
+    # The standalone model starts parked; Simulation.reset selects the runtime
+    # wheel mode before integrating the choreography.
     for name, joint in zip(wheels['lock_equalities'], wheels['joints']):
         ET.SubElement(equality, 'joint', name=name, joint1=joint,
-                      polycoef='0 0 0 0 0', active=str(wheels['mode'] == 'locked').lower(),
+                      polycoef='0 0 0 0 0', active='true',
                       solref='0.002 1', solimp='0.999 0.999 0.001')
     model = mujoco.MjModel.from_xml_string(ET.tostring(scene, encoding='unicode'))
     keyframe = ET.SubElement(scene, 'keyframe')

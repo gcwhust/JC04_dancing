@@ -114,7 +114,7 @@ def test_report_sections(rendered_report, run_dir):
         assert section in text
     for detail in ['小楚', 'JC04', 'MuJoCo', 'jc04_desc4', 'V1.3', '3.3.7', '配乐合成']:
         assert detail in text
-    for private in ['新年', 'new_year', run_dir.name, '证据版本', 'SHA256', 'D04',
+    for private in ['天鹅湖', run_dir.name, '证据版本', 'SHA256', 'D04',
                     'source_snapshot', '0.0005', 'max_horizontal', '后期验证', '无声']:
         assert private not in text
     assert metadata['schema_version'] == 1
@@ -140,7 +140,7 @@ def test_missing_evidence(tmp_path):
     assert not (tmp_path / 'report.pdf').exists()
 
 
-@pytest.mark.parametrize('mutation', ['failed', 'preview', 'fallen', 'nan', 'frames', 'hash', 'missing_still', 'path', 'resource', 'metric_type', 'motion_frame', 'duplicate_label', 'locked_wheels', 'legacy_motion', 'legacy_interpolation', 'invented_original', 'clip_duration', 'missing_phrases_hash'])
+@pytest.mark.parametrize('mutation', ['failed', 'preview', 'fallen', 'nan', 'frames', 'hash', 'missing_still', 'path', 'resource', 'metric_type', 'motion_frame', 'duplicate_label', 'locked_wheels', 'mismatched_motion', 'wrong_interpolation', 'invented_original', 'clip_duration', 'missing_phrases_hash'])
 def test_invalid_run_rejected(run_dir, tmp_path, mutation):
     from jc04_dancing.reporting import build_report
     import shutil
@@ -165,8 +165,8 @@ def test_invalid_run_rejected(run_dir, tmp_path, mutation):
         motion.update(file=first['file'], frame=first['frame'], sample_time_s=first['sample_time_s'])
     if mutation == 'duplicate_label': data['stills'].append(data['stills'][0])
     if mutation == 'locked_wheels': data['simulation']['wheel_mode'] = 'locked'
-    if mutation == 'legacy_motion': data['evidence']['motion']['source'] = 'assets/motions/happy_new_year.csv'
-    if mutation == 'legacy_interpolation': data['evidence']['motion']['interpolation'] = 'cubic'
+    if mutation == 'mismatched_motion': data['evidence']['motion']['source'] = 'assets/motions/mismatched.csv'
+    if mutation == 'wrong_interpolation': data['evidence']['motion']['interpolation'] = 'linear'
     if mutation == 'invented_original': data['evidence']['motion']['generated_choreography'] = False
     if mutation == 'clip_duration': data['evidence']['motion']['clip_duration_s'] -= 1
     if mutation == 'missing_phrases_hash': data['evidence']['resource_sha256'].pop('assets/motions/swan_lake.phrases.json')
@@ -194,7 +194,7 @@ def test_flowchart_files(tmp_path):
     text = text_of(tmp_path / 'flowchart.pdf')
     for label in ['准备环境', '加载模型', '读取动作', '控制仿真', '录制画面', '配乐合成']:
         assert label in text
-    for forbidden in ['异常', 'D04', '无声', 'SHA256', 'new_year', '新年']:
+    for forbidden in ['异常', 'D04', '无声', 'SHA256', '天鹅湖']:
         assert forbidden not in text
 
 
@@ -256,7 +256,7 @@ def test_audible_run_supported(run_dir, tmp_path):
     assert metadata['audio']['D04_verified'] is False
     assert metadata['checks']['audio_stream_present'] is True
     assert metadata['checks']['decoded_audio_rms'] > 0
-    assert '新年' not in text_of(tmp_path / 'report/report.pdf')
+    assert '天鹅湖' not in text_of(tmp_path / 'report/report.pdf')
 
 
 @pytest.mark.parametrize('mutation', ['silent_samples', 'stream_mismatch', 'invented_sync'])

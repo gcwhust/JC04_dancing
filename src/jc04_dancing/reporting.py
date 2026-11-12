@@ -143,7 +143,7 @@ def _validated_run(run_dir: Path) -> tuple[dict, dict]:
             if type(sim[key]) not in (int, float):
                 raise ValueError(f'Invalid simulation metric: {key}')
         sim['joint_range_overrides']
-        for key in ('model', 'actuators', 'leg_pattern', 'rest_deg', 'scene'):
+        for key in ('model', 'actuators', 'rest_deg', 'scene'):
             config[key]
         for key in ('python', 'mujoco', 'numpy', 'Pillow', 'imageio-ffmpeg', 'ffmpeg'):
             data['versions'][key]

@@ -274,12 +274,11 @@ def test_numerical_warning_is_failure(simulation):
         simulation.advance_to(.002)
 
 
-@pytest.mark.parametrize(('dance_id', 'duration'), [('swan_lake', 99)])
-def test_timeline_units_and_selection(dance_id, duration):
-    timeline = build_timeline(dance_id)
-    assert timeline.dance_id == dance_id
+def test_swan_lake_timeline_units_and_selection():
+    timeline = build_timeline('swan_lake')
+    assert timeline.dance_id == 'swan_lake'
     assert timeline.sample(0)['right_hip_pitch'] == pytest.approx(math.radians(40))
-    assert timeline.total_duration == pytest.approx(duration)
+    assert timeline.total_duration == pytest.approx(99)
     with pytest.raises(ValueError, match='Unknown dance'):
         build_timeline('missing')
 

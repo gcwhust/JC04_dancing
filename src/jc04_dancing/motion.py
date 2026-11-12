@@ -1,8 +1,7 @@
 """Sample coordinated poses and wheel speeds from simulation time.
 
 CSV angles are degrees and wheel velocities are rad/s. Public poses are radians.
-New full-body clips use explicit seconds and C2 endpoint conditions. Legacy
-six-arm clips retain their cubic interpolation and absolute frame/fps timing.
+Full-body clips use explicit seconds and C2 endpoint conditions.
 """
 from __future__ import annotations
 
@@ -13,7 +12,7 @@ from pathlib import Path
 from typing import Callable
 
 import numpy as np
-from scipy.interpolate import interp1d, make_interp_spline
+from scipy.interpolate import make_interp_spline
 
 ARM_JOINTS = (
     'right_shoulder_pitch', 'right_shoulder_roll', 'right_elbow_pitch',
@@ -33,7 +32,7 @@ class DanceClip:
     start: float
     duration: float
     _interpolator: Callable = field(repr=False)
-    _wheel_interpolator: Callable | None = field(default=None, repr=False)
+    _wheel_interpolator: Callable = field(repr=False)
 
     @property
     def full_body(self) -> bool:
@@ -41,82 +40,69 @@ class DanceClip:
 
     @property
     def interpolation(self) -> str:
-        return 'quintic' if self.full_body else 'cubic'
+        return 'quintic'
 
     def sample(self, t: float) -> dict[str, float]:
         angles = self._interpolator(min(max(float(t), self.start), self.duration))
         return {name: math.radians(float(value)) for name, value in zip(self.joint_names, angles)}
 
     def wheel_velocities(self, t: float) -> dict[str, float]:
-        if self._wheel_interpolator is None or t < self.start or t > self.duration:
+        if t < self.start or t > self.duration:
             return dict.fromkeys(WHEEL_JOINTS, 0.0)
         return dict(zip(WHEEL_JOINTS, map(float, self._wheel_interpolator(float(t)))))
 
 
-def load_clip(csv_path: Path, fps: float = 24.0) -> DanceClip:
-    """Read explicit full-body seconds or legacy six-arm frame/fps samples.
+def load_clip(csv_path: Path) -> DanceClip:
+    """Read complete body and wheel channels on an explicit seconds clock.
 
-Full-body files must supply all four leg angles and both wheel velocities;
-silently inventing missing motion would hide an incomplete choreography export.
+    Files must supply all ten joint angles and both wheel velocities;
+    missing channels indicate an incomplete choreography export.
     Their clock starts at zero and wheels stop at both endpoints so the outer
     preparation/return can join the recorded body without a velocity jump.
-"""
-    if not math.isfinite(fps) or fps <= 0:
-        raise ValueError('fps must be finite and positive')
+    """
     with Path(csv_path).open(newline='', encoding='utf-8-sig') as stream:
         reader = csv.DictReader(stream)
         columns = reader.fieldnames or []
-        full_body = bool(set(columns) & set(LEG_JOINTS + WHEEL_COLUMNS))
-        if full_body and not set(BODY_JOINTS + WHEEL_COLUMNS) <= set(columns):
+        if not set(BODY_JOINTS + WHEEL_COLUMNS) <= set(columns):
             raise ValueError('Full-body CSV requires complete ten-joint and two-wheel channels')
-        clock_column = 'time_s' if 'time_s' in columns else 'frame'
-        joints = BODY_JOINTS if full_body else ARM_JOINTS
-        required = (clock_column, *joints, *(WHEEL_COLUMNS if full_body else ()))
+        required = ('time_s', *BODY_JOINTS, *WHEEL_COLUMNS)
         if len(columns) != len(set(columns)) or not set(required) <= set(columns):
-            raise ValueError('CSV must contain unique time_s/frame and named joint columns')
+            raise ValueError('CSV must contain unique time_s and named joint columns')
         try:
             rows = [[float(row[name]) for name in required] for row in reader]
         except (TypeError, ValueError) as exc:
             raise ValueError('CSV times, angles and wheel speeds must be finite numbers') from exc
     data = np.asarray(rows, dtype=float)
     if len(rows) < 4:
-        raise ValueError('Cubic interpolation requires at least four rows')
+        raise ValueError('Full-body interpolation requires at least four rows')
     if not np.all(np.isfinite(data)):
         raise ValueError('CSV times, angles and wheel speeds must be finite numbers')
     if not np.all(np.diff(data[:, 0]) > 0):
-        raise ValueError('CSV frames must be strictly increasing')
-    times = data[:, 0] if clock_column == 'time_s' else data[:, 0] / fps
-    angles = data[:, 1:1 + len(joints)]
-    if full_body:
-        if times[0] != 0:
-            raise ValueError('Full-body CSV time must start at zero')
-        if np.any(data[[0, -1], -len(WHEEL_COLUMNS):] != 0):
-            raise ValueError('Full-body CSV requires zero wheel velocities at both endpoints')
-        # Dense exports retain smooth motion between samples, including C2 joins
-        # to the preparation/return. A zero derivative is never imposed per row.
-        values = data[:, 1:]
-        zeros = np.zeros(values.shape[1])
-        spline = make_interp_spline(times, values, k=5,
-                                    bc_type=([(1, zeros), (2, zeros)], [(1, zeros), (2, zeros)]))
-        return DanceClip(joints, float(times[0]), float(times[-1]),
-                         lambda t: spline(t)[:len(joints)], lambda t: spline(t)[len(joints):])
-    interpolator = interp1d(
-        times, angles, axis=0, kind='cubic', assume_sorted=True,
-        bounds_error=False, fill_value=(angles[0], angles[-1]),
-    )
-    return DanceClip(joints, float(times[0]), float(times[-1]), interpolator)
+        raise ValueError('CSV times must be strictly increasing')
+    times = data[:, 0]
+    if times[0] != 0:
+        raise ValueError('Full-body CSV time must start at zero')
+    if np.any(data[[0, -1], -len(WHEEL_COLUMNS):] != 0):
+        raise ValueError('Full-body CSV requires zero wheel velocities at both endpoints')
+    # Dense exports retain smooth motion between samples, including C2 joins
+    # to the preparation/return. A zero derivative is never imposed per row.
+    values = data[:, 1:]
+    zeros = np.zeros(values.shape[1])
+    spline = make_interp_spline(times, values, k=5,
+                                bc_type=([(1, zeros), (2, zeros)], [(1, zeros), (2, zeros)]))
+    return DanceClip(BODY_JOINTS, float(times[0]), float(times[-1]),
+                     lambda t: spline(t)[:len(BODY_JOINTS)], lambda t: spline(t)[len(BODY_JOINTS):])
 
 
 class DanceTimeline:
     """Add presentation transitions around the recorded choreography.
 
-    ``rest`` contains ten named targets in radians; ``leg_pattern`` uses the
-    units in robot.yaml (degree amplitudes, Hz frequency, radian phase offsets).
-    The deployed planner has zero forward bias and zero knee phase lead.
+    ``rest`` contains ten named targets in radians. The clip supplies every
+    body joint and wheel target during the authored choreography.
     """
 
     def __init__(
-        self, clip: DanceClip, rest: dict[str, float], leg_pattern: dict,
+        self, clip: DanceClip, rest: dict[str, float],
         prep: float = 2.0, return_time: float = 2.0, hold: float = 1.0,
     ) -> None:
         if not all(math.isfinite(value) for value in (prep, return_time, hold)):
@@ -125,30 +111,16 @@ class DanceTimeline:
             raise ValueError('Preparation/return must be positive; hold must be nonnegative')
         self.clip = clip
         self.rest = dict(rest)
-        self.leg_pattern = dict(leg_pattern)
         self.prep = prep
         self.return_time = return_time
         self.hold = hold
-        self.wheel_mode = 'driven' if clip.full_body else 'locked'
+        self.wheel_mode = 'driven'
         self.total_duration = prep + clip.duration + return_time + hold
-        self._first = self._body(0.0)
-        self._last = self._body(clip.duration)
-
-    def _body(self, t: float) -> dict[str, float]:
-        result = self.clip.sample(t)
-        if self.clip.full_body:
-            return result
-        pattern = self.leg_pattern
-        omega = 2 * math.pi * pattern['frequency_hz']
-        for side in ('right', 'left'):
-            wave = math.sin(omega * t + pattern[f'{side}_phase_rad'])
-            for joint in ('hip', 'knee'):
-                name = f'{side}_{joint}_pitch'
-                result[name] = self.rest[name] + math.radians(pattern[f'{joint}_amplitude_deg']) * wave
-        return result
+        self._first = self.clip.sample(0.0)
+        self._last = self.clip.sample(clip.duration)
 
     def _blend(self, start: dict[str, float], end: dict[str, float], s: float) -> dict[str, float]:
-        weight = s**3 * (10 + s * (-15 + 6 * s)) if self.clip.full_body else s * s * (3 - 2 * s)
+        weight = s**3 * (10 + s * (-15 + 6 * s))
         return {name: value + weight * (end[name] - value) for name, value in start.items()}
 
     def wheel_velocities(self, t: float) -> dict[str, float]:
@@ -166,7 +138,7 @@ class DanceTimeline:
             return self._blend(self.rest, self._first, t / self.prep)
         body_time = t - self.prep
         if body_time <= self.clip.duration:
-            return self._body(body_time)
+            return self.clip.sample(body_time)
         return_elapsed = body_time - self.clip.duration
         if return_elapsed < self.return_time:
             return self._blend(self._last, self.rest, return_elapsed / self.return_time)

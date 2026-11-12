@@ -4,6 +4,8 @@
 
 小楚 JC04 在 **MuJoCo 3.3.7** 中演绎《天鹅湖》。重新编排的动作把大幅前举、屈肘收展、左右斜向应答、髋膝起伏与轮式滑行转向写入同一份 CSV，由同一仿真时钟执行。
 
+仓库仅提供《天鹅湖》这一支舞蹈，包含动作生成器、完整动作 CSV、配乐和复现所需模型。
+
 [![点击播放完整有声视频](docs/media/swan-lake-preview.gif)](https://gcwhust.github.io/JC04_dancing/#swan-lake)
 
 **[▶ 观看完整有声视频](https://gcwhust.github.io/JC04_dancing/#swan-lake)** · 1920 × 1080 · 30 FPS。上方 GIF 无声，点击打开有声播放器。
@@ -87,7 +89,7 @@ python -m jc04_dancing submit \
 
 ## 调整编排与验证
 
-舞蹈数据为 `src/jc04_dancing/assets/motions/swan_lake.csv`。角度单位为度，左右轮速单位为 rad/s，时间单位为秒。生成器和音乐时间点随源码提供，修改后需重新检查、录制与合成，避免材料对应不同版本。
+舞蹈数据为 `src/jc04_dancing/assets/motions/swan_lake.csv`。播放器只接受含 `time_s`、10 个臂腿角度和 2 个轮速通道的完整 CSV；角度单位为度，左右轮速单位为 rad/s，时间单位为秒。生成器和音乐时间点随源码提供，修改后需重新检查、录制与合成，避免材料对应不同版本。
 
 ```bash
 # 重新生成默认 CSV 与音乐段落时间表

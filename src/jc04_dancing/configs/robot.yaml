@@ -28,15 +28,9 @@ rest_deg:
   right_knee_pitch: 100.7787
   left_hip_pitch: 40.0
   left_knee_pitch: 100.7787
-leg_pattern:
-  hip_amplitude_deg: 1.0
-  knee_amplitude_deg: 1.0
-  frequency_hz: 0.25
-  left_phase_rad: 3.141592653589793
-  right_phase_rad: 0.0
 wheels:
-  # Legacy/debug default; authored full-body timelines select driven mode.
-  mode: locked
+  # Swan Lake supplies both wheel velocity targets in its full-body score.
+  mode: driven
   joints: [right_wheel_joint, left_wheel_joint]
   lock_equalities: [right_wheel_lock, left_wheel_lock]
   velocity_gain: 4.0

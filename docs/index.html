@@ -30,7 +30,7 @@
     a:focus-visible { outline: 2px solid #1d5864; outline-offset: 5px; border-radius: 2px; }
     footer { margin-top: 40px; padding-top: 20px; border-top: 1px solid #e1e6e5; font-size: 12px; }
     footer a { display: inline-flex; align-items: center; min-height: 32px; }
-    footer p { margin: 2px 0 0; color: #667882; line-height: 1.8; }
+    footer span { color: #667882; line-height: 1.8; }
     @media (max-width: 600px) {
       main { padding: 32px 20px 24px; }
       header { margin-bottom: 24px; }
@@ -56,12 +56,12 @@
     <section class="dance" id="swan-lake" aria-labelledby="swan-title">
       <div class="player">
         <video controls playsinline preload="metadata" poster="media/swan-lake-poster.png" aria-label="小楚机器人天鹅湖舞蹈，含配乐，无对白">
-          <source src="media/swan-lake.mp4?v=ae98d1d3" type="video/mp4">
-          当前浏览器不支持播放，请<a href="media/swan-lake.mp4?v=ae98d1d3">下载 MP4 视频</a>。
+          <source src="media/swan-lake.mp4?v=114dd77e" type="video/mp4">
+          当前浏览器不支持播放，请<a href="media/swan-lake.mp4?v=114dd77e">下载 MP4 视频</a>。
         </video>
       </div>
       <nav class="links" aria-label="视频与资料">
-        <a href="media/swan-lake.mp4?v=ae98d1d3" download>
+        <a href="media/swan-lake.mp4?v=114dd77e" download>
           <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>
           <span>下载视频</span>
         </a>
@@ -97,8 +97,7 @@
       </nav>
     </section>
     <footer>
-      <a href="https://github.com/gcwhust/JC04_dancing/blob/main/docs/audio-provenance.md">配乐来源</a>
-      <p>配乐为柴可夫斯基《天鹅湖》节选片段。</p>
+      <a href="https://github.com/gcwhust/JC04_dancing/blob/main/docs/audio-provenance.md">配乐来源：</a><span>柴可夫斯基《天鹅湖》节选片段。</span>
     </footer>
   </main>
 </body>

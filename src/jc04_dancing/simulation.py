@@ -13,7 +13,7 @@ from .resources import resource_path
 
 
 def build_timeline(dance_id: str) -> DanceTimeline:
-    """Build an unchanged built-in dance, including presentation transitions."""
+    """Build the Swan Lake choreography, including presentation transitions."""
     dances = yaml.safe_load(resource_path('configs/dances.yaml').read_text())
     robot = yaml.safe_load(resource_path('configs/robot.yaml').read_text())
     if dance_id not in dances['dances']:
@@ -21,9 +21,9 @@ def build_timeline(dance_id: str) -> DanceTimeline:
     entry = dances['dances'][dance_id]
     transition = dances['transition']
     timeline = DanceTimeline(
-        load_clip(resource_path(entry['file']), entry['fps']),
+        load_clip(resource_path(entry['file'])),
         {name: math.radians(value) for name, value in robot['rest_deg'].items()},
-        robot['leg_pattern'], prep=transition['prep'],
+        prep=transition['prep'],
         return_time=transition['return'], hold=transition['hold'],
     )
     timeline.dance_id = dance_id
