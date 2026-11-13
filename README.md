@@ -1,6 +1,6 @@
 # JC04 Dancing / 小楚机器人舞蹈仿真
 
-[**Homepage · 项目主页**](https://gcwhust.github.io/JC04_dancing/) · [演示视频](https://gcwhust.github.io/JC04_dancing/#swan-lake) · [设计说明 PDF](https://gcwhust.github.io/JC04_dancing/media/design.pdf) · [流程图](docs/media/workflow.png)
+[**Homepage · 项目主页**](https://gcwhust.github.io/JC04_dancing/) · [演示视频](https://gcwhust.github.io/JC04_dancing/#swan-lake) · [设计说明 PDF](https://gcwhust.github.io/JC04_dancing/media/design.pdf) · [流程图 PDF](https://gcwhust.github.io/JC04_dancing/media/workflow.pdf)
 
 **2026 全国大学生机器人与算法大赛 · 机器人舞蹈赛道**
 
@@ -97,6 +97,6 @@ python -m jc04_dancing add-audio \
 
 ## 资料与来源
 
-[设计说明](docs/media/design.pdf) · [运行流程图](docs/media/workflow.png) · [模型说明](docs/model-conversion.md)
+[设计说明](docs/media/design.pdf) · [运行流程图](docs/media/workflow.pdf) · [模型说明](docs/model-conversion.md)
 
 机器人模型来源为 **jc04_desc4 V1.3**。配乐为柴可夫斯基《天鹅湖》节选，录音来源和使用信息见[配乐说明](docs/audio-provenance.md)。模型、录音和字体保留各自许可，详见[素材声明](src/jc04_dancing/assets/licenses/ASSET-NOTICES.md)。

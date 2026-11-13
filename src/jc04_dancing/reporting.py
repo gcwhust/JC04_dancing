@@ -32,6 +32,12 @@ from .resources import resource_path
 from .simulation import build_timeline
 
 
+PROJECT_LINKS = (
+    ('项目主页', 'https://gcwhust.github.io/JC04_dancing/'),
+    ('开源代码', 'https://github.com/gcwhust/JC04_dancing'),
+)
+
+
 def _sha256(path: Path) -> str:
     digest = hashlib.sha256()
     with path.open('rb') as stream:
@@ -266,10 +272,17 @@ def render_flowchart(output_pdf: Path, output_png: Path) -> None:
             ax.text(2.35, y + .16, title, va='center', fontsize=13.5, color='#163d54')
             ax.text(2.35, y - .19, detail, va='center', fontsize=10.5, color='#526b79')
         fig.subplots_adjust(left=.015, right=.985, top=.99, bottom=.01)
+        project_links = [
+            ax.text(x, .2, label, ha='center', fontsize=9, color='#237d8c', url=url)
+            for x, (label, url) in zip((4.35, 5.65), PROJECT_LINKS)
+        ]
         try:
             for path in (Path(output_pdf), Path(output_png)):
                 path.parent.mkdir(parents=True, exist_ok=True)
             fig.savefig(output_pdf, metadata={'Title': '小楚机器人操作流程'})
+            # The report embeds this PNG and supplies its own clickable footer.
+            for link in project_links:
+                link.set_visible(False)
             fig.savefig(output_png, dpi=180)
         finally:
             plt.close(fig)
@@ -343,16 +356,24 @@ def _write_report(data: dict, run_dir: Path, target: Path, team_id: str, flowcha
             story.append(paragraph(Template(line).substitute(values)))
 
     def footer(canvas, document):
+        canvas.saveState()
         canvas.setStrokeColor(colors.HexColor('#d5e5e9'))
-        canvas.line(48, 40, A4[0] - 48, 40)
+        canvas.line(48, 65, A4[0] - 48, 65)
+        links = Paragraph('　　'.join(
+            f'<link href="{escape(url, quote=True)}" color="#237d8c"><u>{_markup(label)}</u></link>'
+            for label, url in PROJECT_LINKS
+        ), caption)
+        links.wrap(usable_width, 20)
+        links.drawOn(canvas, 48, 43)
         footer_text = paragraph(f'小楚机器人舞蹈仿真　 /　 {document.page:02}', caption)
         footer_text.wrap(usable_width, 20)
         footer_text.drawOn(canvas, 48, 22)
         canvas.setFillColor(colors.HexColor('#28868c'))
         canvas.roundRect(48, A4[1] - 32, 34, 3, 1.5, fill=1, stroke=0)
+        canvas.restoreState()
 
     SimpleDocTemplate(str(target), pagesize=A4, rightMargin=48, leftMargin=48,
-                      topMargin=49, bottomMargin=56, title='小楚机器人舞蹈仿真说明',
+                      topMargin=49, bottomMargin=78, title='小楚机器人舞蹈仿真说明',
                       author=team_id, pageCompression=1).build(story, onFirstPage=footer, onLaterPages=footer)
     return [{**still, 'sha256': _sha256(image_path)}]
 

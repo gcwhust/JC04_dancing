@@ -107,6 +107,24 @@ def text_of(path):
         return '\n'.join(page.get_text() for page in document)
 
 
+@pytest.mark.parametrize('filename', ['report.pdf', 'flowchart.pdf'])
+def test_pdf_project_links_are_clickable_and_cover_their_labels(rendered_report, filename):
+    root, _ = rendered_report
+    destinations = {
+        'https://gcwhust.github.io/JC04_dancing/': '项目主页',
+        'https://github.com/gcwhust/JC04_dancing': '开源代码',
+    }
+    with fitz.open(root / filename) as document:
+        for page in document:
+            links = page.get_links()
+            assert {link.get('uri') for link in links} == set(destinations)
+            for link in links:
+                rectangle = link['from']
+                assert not rectangle.is_empty and page.rect.contains(rectangle)
+                labels = page.search_for(destinations[link['uri']])
+                assert any(rectangle.intersects(label) for label in labels)
+
+
 def test_report_sections(rendered_report, run_dir):
     root, metadata = rendered_report
     text = text_of(root / 'report.pdf')
